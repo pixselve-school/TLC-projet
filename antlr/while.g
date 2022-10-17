@@ -57,29 +57,29 @@ UNICODE_ESC
     ;
 
 // Grammaire du langage while
-program	:	function program | function;
+program	:	function (program)?;
 function:	'function' Symbol ':' definition;
 definition
 	:	'read' input '%' commands '%' 'write' output;
-input	:	inputSub | '';
-inputSub:	Variable ',' inputSub | Variable;
-output	:	Variable ',' output | Variable;
-commands:	command ';' commands | command;
-command	:	'nop' | vars ':=' exprs
-	|	'if' expression 'then' commands ('else' commands)? 'fi';
+input	:	(inputSub)?;
+inputSub:	Variable (',' inputSub)?;
+output	:	Variable (',' output)?;
+commands:	command (';' commands)?;
+command	:	'nop'
+    | vars ':=' exprs
+	|	'if' expression 'then' commands ('else' commands)? 'fi'
 	|	'while' expression 'do' commands 'od'
 	|	'for' expression 'do' commands 'od'
-	|	'foreach' variable 'in' expression 'do' commands 'od';
+	|	'foreach' Variable 'in' expression 'do' commands 'od';
 exprBase:	'nil' | Variable | Symbol
 	|	'(' 'cons' lexpr ')' | '(' 'list' lexpr ')'
 	|	'(' 'hd' exprBase ')' | '(' 'tl' exprBase ')'
 	|	'(' Symbol lexpr ')';
-vars	:	Variable ',' vars | Variable;
-exprs	:	expression ',' exprs | expression;
+vars	:	Variable (',' vars)?;
+exprs	:	expression (',' exprs)?;
 expression
-	:	exprBase
-	|	exprBase '=?' exprBase;
-lexpr	:	exprBase lexpr | '';
+	:	exprBase ('=?' exprBase)?;
+lexpr	:	(exprBase lexpr)?;
 Variable:	Maj (Maj|Min|Dec)*('!'|'?')?;
 Symbol	:	Min(Maj|Min|Dec)*('!'|'?')?;
 
