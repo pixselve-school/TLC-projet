@@ -55,3 +55,35 @@ fragment
 UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
+
+// Grammaire du langage while
+program	:	function program | function;
+function:	'function' Symbol ':' definition;
+definition
+	:	'read' input '%' commands '%' 'write' output;
+input	:	inputSub | '';
+inputSub:	Variable ',' inputSub | Variable;
+output	:	Variable ',' output | Variable;
+commands:	command ';' commands | command;
+command	:	'nop' | vars ':=' exprs
+	|	'if' expression 'then' commands ('else' commands)? 'fi';
+	|	'while' expression 'do' commands 'od'
+	|	'for' expression 'do' commands 'od'
+	|	'foreach' variable 'in' expression 'do' commands 'od';
+exprBase:	'nil' | Variable | Symbol
+	|	'(' 'cons' lexpr ')' | '(' 'list' lexpr ')'
+	|	'(' 'hd' exprBase ')' | '(' 'tl' exprBase ')'
+	|	'(' Symbol lexpr ')';
+vars	:	Variable ',' vars | Variable;
+exprs	:	expression ',' exprs | expression;
+expression
+	:	exprBase
+	|	exprBase '=?' exprBase;
+lexpr	:	exprBase lexpr | '';
+Variable:	Maj (Maj|Min|Dec)*('!'|'?')?;
+Symbol	:	Min(Maj|Min|Dec)*('!'|'?')?;
+
+Maj	:	'A'..'Z';
+Min	:	'a'..'z';
+Dec	:	'0'..'9';
+	
