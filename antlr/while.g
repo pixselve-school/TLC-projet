@@ -58,12 +58,12 @@ exprBase:	'nil' -> NIL
 	| '(' 'list' lexpr ')' -> ^(LIST lexpr)
 	|	'(' 'hd' exprBase ')'  -> ^(HD exprBase)
 	| '(' 'tl' exprBase ')' -> ^(TL exprBase)
-	|	'(' Symbol lexpr ')' -> ^(SYMB Symbol lexpr);
+	|	'(' Symbol lexpr? ')' -> ^(SYMB Symbol lexpr?);
 vars	:	Variable (',' Variable)* -> ^(VARS Variable+);
 exprs	:	expression (',' expression)* -> ^(EXPRS expression+);
 expression
 	:	exprBase ('=?' exprBase)? -> exprBase+;
-lexpr	:	(exprBase lexpr)? -> ^(LEXPR exprBase? lexpr?);
+lexpr	:	exprBase+ -> exprBase+;
 Variable:	Maj (Maj|Min|Dec)*('!'|'?')?;
 Symbol	:	Min(Maj|Min|Dec)*('!'|'?')?;
 
