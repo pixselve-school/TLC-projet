@@ -24,6 +24,10 @@ tokens {
 	SYMB;
 }
 
+@header {
+    package org.example;
+}
+
 COMMENT
     :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
     |   '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
