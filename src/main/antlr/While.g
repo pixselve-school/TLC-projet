@@ -1,4 +1,4 @@
-grammar while;
+grammar While;
 options { output=AST; }
 tokens {
 	PROGRAM;
