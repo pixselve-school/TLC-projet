@@ -27,6 +27,9 @@ tokens {
 @header {
     package org.example;
 }
+@lexer::header{
+    package org.example;
+}
 
 COMMENT
     :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
