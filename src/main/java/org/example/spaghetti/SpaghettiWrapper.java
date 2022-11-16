@@ -1,5 +1,7 @@
 package org.example.spaghetti;
 
+import org.example.spaghetti.exception.StackException;
+
 import javax.management.InstanceNotFoundException;
 import java.util.Stack;
 
@@ -24,7 +26,7 @@ public class SpaghettiWrapper<T> {
      * @param name of the variable
      * @return the value
      */
-    public T get(String name) throws InstanceNotFoundException {
+    public T get(String name) throws InstanceNotFoundException, StackException {
         return stack.peek().get(name);
     }
 
@@ -33,7 +35,7 @@ public class SpaghettiWrapper<T> {
      * @param name of the variable
      * @param obj the value
      */
-    public void set(String name, T obj){
+    public void set(String name, T obj) throws StackException {
         stack.peek().set(name, obj);
     }
 

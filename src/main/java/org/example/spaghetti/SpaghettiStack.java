@@ -1,5 +1,9 @@
 package org.example.spaghetti;
 
+import org.example.spaghetti.exception.AlreadyExistException;
+import org.example.spaghetti.exception.NotFoundException;
+import org.example.spaghetti.exception.StackException;
+
 import javax.management.InstanceNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,12 +38,15 @@ class SpaghettiStack<T> {
     }
 
     /**
-     * Add or modify a value
+     * Add a value
      * @param name of the variable
      * @param obj value
      */
-    public void set(String name, T obj){
-        hash.put(name, obj);
+    public void set(String name, T obj) throws StackException{
+        if(parent != null && parent.exist(name))
+            parent.set(name, obj);
+        else
+            hash.put(name, obj);
     }
 
     /**
@@ -48,14 +55,27 @@ class SpaghettiStack<T> {
      * @return the value
      * @throws InstanceNotFoundException if the value is not found
      */
-    public T get(String name) throws InstanceNotFoundException {
+    public T get(String name) throws StackException {
         if(hash.containsKey(name)){
             return hash.get(name);
         }else{
             if(parent == null)
-                throw new InstanceNotFoundException(name);
+                throw new NotFoundException(name);
             return parent.get(name);
         }
+    }
+
+    /**
+     * Know if the variable exist
+     * @param name of the variable
+     * @return if exist
+     */
+    public boolean exist(String name){
+        if(hash.containsKey(name))
+            return true;
+        if(parent != null)
+            return parent.exist(name);
+        return false;
     }
 
     @Override
