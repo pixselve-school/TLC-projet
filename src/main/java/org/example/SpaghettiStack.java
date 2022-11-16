@@ -18,7 +18,7 @@ public class SpaghettiStack<T> {
         parent.children.add(this);
         children = new ArrayList<>();
     }
-    public void addEntity(String name, T obj){
+    public void set(String name, T obj){
         hash.put(name, obj);
     }
     public T get(String name){

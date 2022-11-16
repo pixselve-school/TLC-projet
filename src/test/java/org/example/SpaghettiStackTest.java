@@ -15,10 +15,10 @@ class SpaghettiStackTest {
 
         SpaghettiStack<Integer> child2 = new SpaghettiStack<>(stack);
 
-        stack.addEntity("a", 8);
-        child1.addEntity("x", 1);
-        child11.addEntity("a", 6);
-        child2.addEntity("p", 3);
+        stack.set("a", 8);
+        child1.set("x", 1);
+        child11.set("a", 6);
+        child2.set("p", 3);
 
         assertEquals(8, child1.get("a"));
         assertNull(stack.get("x"));
