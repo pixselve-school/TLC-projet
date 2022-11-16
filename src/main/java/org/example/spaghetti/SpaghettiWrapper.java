@@ -40,6 +40,16 @@ public class SpaghettiWrapper<T> {
     }
 
     /**
+     * Declare a new variable in this scope
+     * @param name
+     * @param obj
+     * @throws StackException is the name already exist
+     */
+    public void newSet(String name, T obj) throws StackException{
+        stack.peek().newSet(name, obj);
+    }
+
+    /**
      * @return the level of where you are
      */
     public int getDepth(){

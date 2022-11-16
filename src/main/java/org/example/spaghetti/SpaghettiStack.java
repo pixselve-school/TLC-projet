@@ -50,6 +50,18 @@ class SpaghettiStack<T> {
     }
 
     /**
+     * Enfore a new declaration in this scope
+     * @param name
+     * @param obj
+     * @throws StackException
+     */
+    public void newSet(String name, T obj) throws StackException{
+        if(hash.containsKey(name))
+            throw new AlreadyExistException(name);
+        hash.put(name, obj);
+    }
+
+    /**
      * Search the value on this level and upper level
      * @param name of the variable
      * @return the value
