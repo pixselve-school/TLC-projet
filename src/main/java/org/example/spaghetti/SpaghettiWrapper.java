@@ -26,7 +26,7 @@ public class SpaghettiWrapper<T> {
      * @param name of the variable
      * @return the value
      */
-    public T get(String name) throws InstanceNotFoundException, StackException {
+    public T get(String name) throws StackException {
         return stack.peek().get(name);
     }
 
