@@ -3,6 +3,8 @@ package org.example.spaghetti;
 import org.example.spaghetti.exception.StackException;
 
 import javax.management.InstanceNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -28,6 +30,25 @@ public class SpaghettiWrapper<T> {
      */
     public T get(String name) throws StackException {
         return stack.peek().get(name);
+    }
+
+    /**
+     * Check if the value is already assign on the stack
+     * @param name
+     * @return
+     */
+    public boolean exists(String name) {
+        return stack.peek().exist(name);
+    }
+
+    /**
+     * Get the list of variables defined in a block
+     * @return
+     */
+    public List<String> listInChildren(){
+        List<String> list = new ArrayList<>();
+        stack.peek().listInChildren(list);
+        return list;
     }
 
     /**

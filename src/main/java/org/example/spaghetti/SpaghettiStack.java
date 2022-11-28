@@ -7,6 +7,7 @@ import org.example.spaghetti.exception.StackException;
 import javax.management.InstanceNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Tree class used internaly for stack.
@@ -104,5 +105,16 @@ class SpaghettiStack<T> {
         children.forEach(stack -> {
             stack.toString(tab+1, sb);
         });
+    }
+
+    /**
+     * Get the list of variables in all the children
+     * @return
+     */
+    public void listInChildren(List<String> list) {
+        list.addAll(hash.keySet().stream().toList());
+        for (SpaghettiStack<T> child : children) {
+            child.listInChildren(list);
+        }
     }
 }
