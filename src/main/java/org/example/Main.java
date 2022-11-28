@@ -21,6 +21,6 @@ public class Main {
 
     CommonTree tree = (CommonTree) program.getTree();
 
-    System.out.println(tree);
+    System.out.println(tree.toStringTree());
   }
 }
