@@ -11,8 +11,6 @@ import java.nio.file.Path;
 
 public class Main {
   public static void main(String[] args) throws IOException, RecognitionException, CheckerException {
-    System.out.println("Hello world!");
-
     String path = "src/main/resources/and.txt";
     String txt = Files.readString(Path.of(path));
     CharStream cs = new ANTLRStringStream(txt);
