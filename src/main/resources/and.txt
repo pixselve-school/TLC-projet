@@ -1,15 +1,70 @@
+// true constant (for lisibility)
+function true :
+    read
+    %
+        Result := (cons nil nil)
+    %
+    write Result
+
+// false constant (for lisibility)
+function false :
+    read
+    %
+        Result := nil
+    %
+    write Result
+
+// Logical not
+function not :
+    read Op1
+    %
+        if Op1 then Result := (false) else Result := (true) fi
+    %
+    write Result
+
 // Logical and
 function and :
-read Op1, Op2
-%
-    if (not Op1) then
-        Result := (false)
-    else
-        if (not Op2) then
+    read Op1, Op2
+    %
+        if (not Op1) then
             Result := (false)
         else
-            Result := (true)
+            if (not Op2) then
+                Result := (false)
+            else
+                Result := (true)
+            fi
         fi
-    fi
-%
-write Result1
+    %
+    write Result
+
+// Addition of two numbers
+function add :
+    read Op1, Op2
+    %
+        Result := Op1 ;
+        for Op2 do
+            Result := ( cons nil Result )
+        od
+    %
+    write Result
+
+// Soustraction of two numbers (there is no negative number...)
+function sub :
+    read Op1, Op2
+    %
+        for Op2 do
+            Result := (tl Result)
+        od
+    %
+    write Result
+
+// Multiplication
+function mul :
+    read Op1, Op2
+    %
+        for Op1 do
+            Result := (add Result Op2)
+        od
+    %
+    write Result
