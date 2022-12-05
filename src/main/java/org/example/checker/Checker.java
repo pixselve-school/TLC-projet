@@ -16,15 +16,26 @@ import java.util.List;
 public class Checker {
     CommonTree tree;
     String filename;
+    String[] fileText;
 
-    public Checker(CommonTree tree, String filename) {
+    public Checker(CommonTree tree, String filename, String fileText) {
         this.tree = tree;
         this.filename = filename;
+        this.fileText = fileText.split("\n");
     }
 
     public void check() throws CheckerException {
-        SpaghettiWrapper<Type> stack = new SpaghettiWrapper<>();
-        symbolTable(stack, tree);
+        try{
+            SpaghettiWrapper<Type> stack = new SpaghettiWrapper<>();
+            symbolTable(stack, tree);
+        }catch (CheckerException e){
+            int line = e.getLine();
+            if(line < 1 || line > fileText.length)
+                throw e;
+            String error = e.toString(fileText[line-1]);
+
+            System.err.println(error);
+        }
     }
     private void symbolTable(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         switch (tree.getType()) {
@@ -58,10 +69,10 @@ public class Checker {
         String name = tree.getText();
         try {
             if(!stack.get(name).getClass().equals(typeClass)){
-                throw new NotDeclaredException(filename, tree, name);
+                throw new NotDeclaredException(filename, tree, name, typeClass);
             }
         } catch (NotFoundException e) {
-            throw new NotDeclaredException(filename, tree, name);
+            throw new NotDeclaredException(filename, tree, name, typeClass);
         } catch (StackException e) {
             throw new UnhandledException(filename, tree);
         }
@@ -152,7 +163,7 @@ public class Checker {
         List<String> children = stack.listInChildren();
         for (String listInChild : outputsStack.listInChildren()) {
             if(!children.contains(listInChild))
-                throw new NotDeclaredException(filename, outputs, listInChild);
+                throw new NotDeclaredException(filename, outputs, listInChild, VariableType.class);
         }
         stack.up();
 

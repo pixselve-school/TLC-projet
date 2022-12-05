@@ -21,7 +21,7 @@ public class Main {
 
     CommonTree tree = (CommonTree) program.getTree();
 
-    Checker checker = new Checker(tree, Path.of(path).toAbsolutePath().toString());
+    Checker checker = new Checker(tree, Path.of(path).toAbsolutePath().toString(), txt);
 
     checker.check();
 
