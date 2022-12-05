@@ -42,6 +42,8 @@ public class Checker {
                 stack.up();
             }
             default -> {
+                if(tree.getChildren() == null)
+                    return;
                 for (Object child : tree.getChildren()) {
                     symbolTable(stack, (CommonTree) child);
                 }
@@ -50,7 +52,7 @@ public class Checker {
     }
 
     private void parseGetVars(SpaghettiWrapper<Type> stack, CommonTree tree, Class<?> typeClass) throws CheckerException {
-        if(tree.getType() != WhileLexer.Variable)
+        if(tree.getType() != WhileLexer.Variable && tree.getType() != WhileLexer.Symbol)
             return;
 
         String name = tree.getText();
@@ -86,6 +88,8 @@ public class Checker {
     }
 
     private void parseInputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+        if(tree.getChildren() == null)
+            return;
         for (Object child : tree.getChildren()) {
             CommonTree childTree = (CommonTree) child;
             String name = childTree.getText();
