@@ -48,8 +48,8 @@ program	:	function+ -> ^(PROGRAM function+);
 function:	'function' Symbol ':' definition -> ^(FUNCTION Symbol definition);
 definition
 	:	'read' input '%' commands '%' 'write' output -> input commands output;
-input	:	inputSub? -> inputSub?;
-inputSub:	Variable (',' Variable)* -> ^(INPUTS Variable+);
+input	:	inputSub -> inputSub;
+inputSub:	Variable? (',' Variable)* -> ^(INPUTS Variable*);
 output	:	Variable (',' Variable)* -> ^(OUTPUTS Variable+);
 commands:	command (';' command)* -> ^(COMMANDS command+);
 command	:	'nop' -> NOP
