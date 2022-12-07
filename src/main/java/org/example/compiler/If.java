@@ -20,22 +20,20 @@ public class If implements Element {
         Expression condition = new Expression(this.condition);
         Expression.Compose compose = condition.toCode();
         result.append(compose.prepend).append("\n");
-
-        if (elseBranch == null) {
-            result.append("ifz ").append(compose.value).append(" goto false_label_").append(ifCount).append("\n");
-            result.append(Compiler.compile(thenBranch));
-            result.append("false_label_").append(ifCount).append(":\n");
-        } else {
-            result.append("ifz ").append(compose.value).append(" goto false_label_").append(ifCount).append("\n");
-            result.append(Compiler.compile(thenBranch));
-            result.append("goto end_label_").append(ifCount).append("\n");
-            result.append("false_label_").append(ifCount).append(":\n");
-            result.append(Compiler.compile(elseBranch));
-            result.append("end_label_").append(ifCount).append(":\n");
-
-        }
+        int currentIfCount = ifCount;
         ifCount++;
-
+        if (elseBranch == null) {
+            result.append("ifz ").append(compose.value).append(" goto false_label_").append(currentIfCount).append("\n");
+            result.append(Compiler.compile(thenBranch));
+            result.append("false_label_").append(currentIfCount).append(":");
+        } else {
+            result.append("ifz ").append(compose.value).append(" goto false_label_").append(currentIfCount).append("\n");
+            result.append(Compiler.compile(thenBranch));
+            result.append("goto end_label_").append(currentIfCount).append("\n");
+            result.append("false_label_").append(currentIfCount).append(":\n");
+            result.append(Compiler.compile(elseBranch));
+            result.append("end_label_").append(currentIfCount).append(":");
+        }
         return result.toString();
     }
 }
