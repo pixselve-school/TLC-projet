@@ -29,6 +29,7 @@ public class Compiler {
             case WhileLexer.FUNCTION -> compileFunction(tree);
             case WhileLexer.IF -> compileIf(tree);
             case WhileLexer.LET -> compileLet(tree);
+            case WhileLexer.COMMANDS -> compile(tree.getChild(0));
             default -> new StringBuilder("# TODO\n");
         };
     }
