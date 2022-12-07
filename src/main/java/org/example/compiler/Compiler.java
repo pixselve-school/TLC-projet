@@ -30,8 +30,14 @@ public class Compiler {
             case WhileLexer.IF -> compileIf(tree);
             case WhileLexer.LET -> compileLet(tree);
             case WhileLexer.COMMANDS -> compile(tree.getChild(0));
-            default -> new StringBuilder("# TODO\n");
+            case WhileLexer.FOR -> compileFor(tree);
+            default -> new StringBuilder("# TODO : ").append(tree.getType());
         };
+    }
+
+    public static StringBuilder compileFor(Tree tree) {
+        For forLoop = new For(tree);
+        return new StringBuilder(forLoop.toString());
     }
 
     public static StringBuilder compileLet(Tree tree) {
