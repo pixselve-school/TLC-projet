@@ -18,14 +18,15 @@ public class If implements Element {
     public String toString() {
         StringBuilder result = new StringBuilder();
         Expression condition = new Expression(this.condition);
-        result.append(condition.toCode().prepend).append("\n");
+        Expression.Compose compose = condition.toCode();
+        result.append(compose.prepend).append("\n");
 
         if (elseBranch == null) {
-            result.append("ifz ").append(condition.toCode().value).append(" goto false_label_").append(ifCount).append("\n");
+            result.append("ifz ").append(compose.value).append(" goto false_label_").append(ifCount).append("\n");
             result.append(Compiler.compile(thenBranch));
             result.append("false_label_").append(ifCount).append(":\n");
         } else {
-            result.append("ifz ").append(condition.toCode().value).append(" goto false_label_").append(ifCount).append("\n");
+            result.append("ifz ").append(compose.value).append(" goto false_label_").append(ifCount).append("\n");
             result.append(Compiler.compile(thenBranch));
             result.append("goto end_label_").append(ifCount).append("\n");
             result.append("false_label_").append(ifCount).append(":\n");
