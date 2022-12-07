@@ -28,8 +28,14 @@ public class Compiler {
             }
             case WhileLexer.FUNCTION -> compileFunction(tree);
             case WhileLexer.IF -> compileIf(tree);
+            case WhileLexer.LET -> compileLet(tree);
             default -> new StringBuilder("# TODO\n");
         };
+    }
+
+    public static StringBuilder compileLet(Tree tree) {
+        Let let = new Let(tree);
+        return new StringBuilder(let.toString());
     }
 
     public static StringBuilder compileIf(Tree tree) {
