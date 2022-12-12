@@ -2,38 +2,30 @@ package org.example.compiler;
 
 import org.antlr.runtime.tree.Tree;
 
+import java.util.List;
+
 public class Let {
 
-    public String[] variablesNames;
 
-    public Tree[] expressions;
+    public static void toCode(List<String> result, Tree tree) {
 
-    public Let(Tree tree) {
         Tree variables = tree.getChild(0);
-        Tree expressions = tree.getChild(1);
-        this.variablesNames = new String[variables.getChildCount()];
-        this.expressions = new Tree[expressions.getChildCount()];
+        Tree expressionsTree = tree.getChild(1);
+        String[] variablesNames = new String[variables.getChildCount()];
+        Tree[] expressions = new Tree[expressionsTree.getChildCount()];
         for (int i = 0; i < variables.getChildCount(); i++) {
-            this.variablesNames[i] = variables.getChild(i).getText();
+            variablesNames[i] = variables.getChild(i).getText();
         }
-        for (int i = 0; i < expressions.getChildCount(); i++) {
-            this.expressions[i] = expressions.getChild(i);
+        for (int i = 0; i < expressionsTree.getChildCount(); i++) {
+            expressions[i] = expressionsTree.getChild(i);
         }
 
-    }
 
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
         for (int i = 0; i < variablesNames.length; i++) {
             Expression expression = new Expression(expressions[i]);
             Expression.Compose compose = expression.toCode();
-            result.append(compose.prepend).append("\n");
-            result.append(variablesNames[i]);
-            result.append(" = ");
-            result.append(compose.value);
-            result.append("\n");
+            result.addAll(compose.prepend);
+            result.add("%s = %s".formatted(variablesNames[i], compose.value));
         }
-        return result.toString();
     }
 }

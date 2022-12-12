@@ -2,38 +2,31 @@ package org.example.compiler;
 
 import org.antlr.runtime.tree.Tree;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class If implements Element {
-    protected static int ifCount = 0;
 
-    private final Tree condition;
-    private final Tree thenBranch;
-    private final Tree elseBranch;
+    public static void toCode(List<String> result, Tree tree, int index) {
 
-    public If(Tree tree) {
-        condition = tree.getChild(0);
-        thenBranch = tree.getChild(1);
-        elseBranch = tree.getChild(2);
-    }
+        Tree condition = tree.getChild(0);
+        Tree thenBranch = tree.getChild(1);
+        Tree elseBranch = tree.getChild(2);
 
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        Expression condition = new Expression(this.condition);
-        Expression.Compose compose = condition.toCode();
-        result.append(compose.prepend).append("\n");
-        int currentIfCount = ifCount;
-        ifCount++;
+        Expression conditionExp = new Expression(condition);
+        Expression.Compose compose = conditionExp.toCode();
+        result.addAll(compose.prepend);
+        result.add("if %s goto false_label_%d".formatted(compose.value, index));
+        Compiler.compile(thenBranch, result);
         if (elseBranch == null) {
-            result.append("ifz ").append(compose.value).append(" goto false_label_").append(currentIfCount).append("\n");
-            result.append(Compiler.compile(thenBranch));
-            result.append("false_label_").append(currentIfCount).append(":");
+            result.add("false_label_%d:".formatted(index));
         } else {
-            result.append("ifz ").append(compose.value).append(" goto false_label_").append(currentIfCount).append("\n");
-            result.append(Compiler.compile(thenBranch));
-            result.append("goto end_label_").append(currentIfCount).append("\n");
-            result.append("false_label_").append(currentIfCount).append(":\n");
-            result.append(Compiler.compile(elseBranch));
-            result.append("end_label_").append(currentIfCount).append(":");
+            result.add("goto end_label_%d".formatted(index));
+            result.add("false_label_%d:".formatted(index));
+            Compiler.compile(elseBranch, result);
+            result.add("end_label_%d:".formatted(index));
+
         }
-        return result.toString();
     }
+
 }

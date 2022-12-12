@@ -12,48 +12,47 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Compiler {
-    public static StringBuilder compile(Tree tree) {
+
+    static int forCount = 0;
+    static int ifCount = 0;
+
+    public static List<String> compile(Tree tree) {
+        LinkedList<String> result = new LinkedList<>();
+        compile(tree, result);
+        return result;
+    }
+
+    public static void reset() {
+        forCount = 0;
+        ifCount = 0;
+    }
+
+    static void compile(Tree tree, List<String> current) {
+
+
         int nodeType = tree.getType();
-        return switch (nodeType) {
+        switch (nodeType) {
             case WhileLexer.PROGRAM -> {
-                StringBuilder result = new StringBuilder();
                 ArrayList<Tree> children = getChildren(tree);
                 for (Tree child : children) {
-                    result.append(compile(child));
-                    result.append("\n");
+                    compile(child, current);
                 }
-                yield result;
             }
-            case WhileLexer.FUNCTION -> compileFunction(tree);
-            case WhileLexer.IF -> compileIf(tree);
-            case WhileLexer.LET -> compileLet(tree);
-            case WhileLexer.COMMANDS -> compile(tree.getChild(0));
-            case WhileLexer.FOR -> compileFor(tree);
-            default -> new StringBuilder("# TODO : ").append(tree.getType());
-        };
-    }
+            case WhileLexer.FUNCTION -> Function.toCode(current, tree);
+            case WhileLexer.COMMANDS -> compile(tree.getChild(0), current);
+            case WhileLexer.IF -> If.toCode(current, tree, ifCount++);
+            case WhileLexer.LET -> Let.toCode(current, tree);
+            case WhileLexer.FOR -> For.toCode(current, tree, forCount++);
+            case WhileLexer.NOP -> {
 
-    public static StringBuilder compileFor(Tree tree) {
-        For forLoop = new For(tree);
-        return new StringBuilder(forLoop.toString());
-    }
+            }
 
-    public static StringBuilder compileLet(Tree tree) {
-        Let let = new Let(tree);
-        return new StringBuilder(let.toString());
-    }
-
-    public static StringBuilder compileIf(Tree tree) {
-        If ifStatement = new If(tree);
-        return new StringBuilder(ifStatement.toString());
-    }
-
-
-    public static StringBuilder compileFunction(Tree tree) {
-        Function function = new Function(tree);
-        return new StringBuilder(function.toString());
+            default -> throw new RuntimeException("Unknown node type: " + nodeType);
+        }
     }
 
     /**
@@ -86,8 +85,9 @@ public class Compiler {
         org.example.WhileParser.program_return program = parser.program();
 
         CommonTree tree = (CommonTree) program.getTree();
-        String result = compile(tree).toString();
-        System.out.println("------------------");
-        System.out.println(result);
+        List<String> list = compile(tree);
+        for (String s : list) {
+            System.out.println(s);
+        }
     }
 }

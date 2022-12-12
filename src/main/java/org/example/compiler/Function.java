@@ -6,23 +6,13 @@ import org.example.WhileLexer;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import static org.example.compiler.Compiler.compile;
 import static org.example.compiler.Compiler.getChildren;
 
 public class Function implements Element {
-    public String name;
-    public LinkedList<String> output;
 
-    public Tree body;
-
-
-    public Function(Tree tree) {
-        this.name = tree.getChild(0).getText();
-        Tree output = tree.getChild(3);
-        this.output = parseOutput(output);
-        this.body = tree.getChild(2);
-    }
 
     public static LinkedList<String> parseOutput(Tree tree) {
         if (tree.getType() != WhileLexer.OUTPUTS) {
@@ -36,31 +26,20 @@ public class Function implements Element {
         return result;
     }
 
-    private String outputToString() {
-        StringBuilder builder = new StringBuilder();
-        LinkedList<String> strings = this.output;
-        for (int i = 0, stringsSize = strings.size(); i < stringsSize; i++) {
-            String s = strings.get(i);
-            builder.append("return ").append(s);
-            if (i < stringsSize - 1) {
-                builder.append("\n");
-            }
-        }
-        return builder.toString();
-    }
+    public static void toCode(List<String> result, Tree tree) {
 
-    private String bodyToString() {
-        if (this.body.getType() != WhileLexer.COMMANDS) {
-            return "";
-        }
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < this.body.getChildCount(); i++) {
-            result.append(compile(this.body.getChild(i)));
-        }
-        return result.toString();
-    }
+        String name = tree.getChild(0).getText();
+        Tree output = tree.getChild(3);
+        LinkedList<String> outputParsed = parseOutput(output);
+        Tree body = tree.getChild(2);
 
-    public String toString() {
-        return "func begin %s\n%s\n%s\nReturn\nfunc end".formatted(name, this.bodyToString(), this.outputToString());
+
+        result.add("func begin %s".formatted(name));
+        compile(body, result);
+        for (String s : outputParsed) {
+            result.add("return " + s);
+        }
+        result.add("Return");
+        result.add("func end");
     }
 }
