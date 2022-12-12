@@ -1,7 +1,6 @@
 package org.example.compiler;
 
 import org.antlr.runtime.tree.Tree;
-import org.example.WhileLexer;
 import org.example.WhileParser;
 
 import java.util.Collections;
@@ -98,12 +97,64 @@ public class Expression implements Element {
                 }
             }
             case WhileParser.TL -> {
-                Compose compose = new Expression(tree.getChild(0)).toCode();
-                LinkedList<String> prepend = new LinkedList<>(compose.prepend);
-                prepend.add("R_%d = %s[0]".formatted(counter, compose.value));
-                Compose result = new Compose(prepend, "R_%d".formatted(counter));
-                counter++;
-                return result;
+                if (tree.getChild(0).getType() == WhileParser.NIL) {
+                    return new Compose(Collections.emptyList(), "nil");
+//                } else if (tree.getChild(0).getType() == WhileParser.Variable) {
+//                    return new Compose(Collections.emptyList(), tree.getChild(0).getText());
+                } else {
+                    System.out.println(tree.getChild(0).getType());
+                    Compose compose = new Expression(tree.getChild(0)).toCode();
+                    LinkedList<String> prepend = new LinkedList<>(compose.prepend);
+                    prepend.add("R_%d = %s[0]".formatted(counter, compose.value));
+                    Compose result = new Compose(prepend, "R_%d".formatted(counter));
+                    counter++;
+                    return result;
+                }
+            }
+            case WhileParser.HD -> {
+                if (tree.getChild(0).getType() == WhileParser.NIL) {
+                    return new Compose(Collections.emptyList(), "nil");
+//                } else if (tree.getChild(0).getType() == WhileParser.Variable) {
+//                    return new Compose(Collections.emptyList(), tree.getChild(0).getText());
+                } else {
+                    Compose compose = new Expression(tree.getChild(0)).toCode();
+                    LinkedList<String> prepend = new LinkedList<>(compose.prepend);
+                    prepend.add("R_%d = %s[1]".formatted(counter, compose.value));
+                    Compose result = new Compose(prepend, "R_%d".formatted(counter));
+                    counter++;
+                    return result;
+                }
+            }
+            case WhileParser.LIST -> {
+                if (tree.getChildCount() == 0) {
+                    return new Compose(Collections.emptyList(), "nil");
+                } else if (tree.getChildCount() == 1) {
+                    Compose expr = new Expression(tree.getChild(0)).toCode();
+                    LinkedList<String> prepend = new LinkedList<>(expr.prepend);
+                    prepend.add("R_%d[0] = %s".formatted(counter, expr.value));
+                    prepend.add("R_%d[1] = nil".formatted(counter));
+                    Compose result = new Compose(prepend, "R_%d".formatted(counter));
+                    counter++;
+                    return result;
+                } else {
+                    LinkedList<String> prepend = new LinkedList<>();
+                    for (int childCount = tree.getChildCount() - 1; childCount >= 0; childCount--) {
+                        Compose expr = new Expression(tree.getChild(childCount)).toCode();
+                        prepend.addAll(expr.prepend);
+                        if (childCount == tree.getChildCount() - 1) {
+                            prepend.add("R_%d[1] = nil".formatted(counter));
+                            prepend.add("R_%d[0] = %s".formatted(counter, expr.value));
+                        } else {
+                            prepend.add("R_%d[0] = %s".formatted(counter + 1, expr.value));
+                            prepend.add("R_%d[1] = R_%d".formatted(counter + 1, counter));
+                            counter++;
+                        }
+                    }
+
+                    Compose result = new Compose(prepend, "R_%d".formatted(counter));
+                    counter++;
+                    return result;
+                }
             }
             default -> {
                 throw new RuntimeException("NOT IMPLEMENTED");

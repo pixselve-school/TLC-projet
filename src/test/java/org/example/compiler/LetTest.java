@@ -4,6 +4,7 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.Tree;
 import org.example.Utils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
@@ -123,5 +124,108 @@ class LetTest {
                 "R_1[0] = VAR1",
                 "A = R_1",
         }, result.toArray());
+    }
+
+    @Nested
+    class ListTest {
+        @Test
+        void empty() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (list)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "A = nil",
+            }, result.toArray());
+        }
+
+        @Test
+        void oneElement() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (list VAR1)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "R_0[0] = VAR1",
+                    "R_0[1] = nil",
+                    "A = R_0",
+            }, result.toArray());
+        }
+
+        @Test
+        void twoElements() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (list VAR1 VAR2)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            System.out.println(result);
+            assertArrayEquals(new String[]{
+                    "R_0[1] = nil",
+                    "R_0[0] = VAR2",
+                    "R_1[0] = VAR1",
+                    "R_1[1] = R_0",
+                    "A = R_1",
+            }, result.toArray());
+        }
+
+        @Test
+        void threeElements() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (list VAR1 VAR2 VAR3)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            System.out.println(result);
+            assertArrayEquals(new String[]{
+                    "R_0[1] = nil",
+                    "R_0[0] = VAR3",
+                    "R_1[0] = VAR2",
+                    "R_1[1] = R_0",
+                    "R_2[0] = VAR1",
+                    "R_2[1] = R_1",
+                    "A = R_2",
+            }, result.toArray());
+        }
+    }
+
+    @Nested
+    class HdTest {
+        @Test
+        void nil() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (hd nil)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "A = nil",
+            }, result.toArray());
+        }
+
+        @Test
+        void oneElement() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (hd VAR1)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "A = VAR1",
+            }, result.toArray());
+        }
+    }
+
+    @Nested
+    class TlTest {
+        @Test
+        void nil() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (tl nil)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "A = nil",
+            }, result.toArray());
+        }
+
+        @Test
+        void oneElement() throws RecognitionException {
+            Tree tree = getTreeForCode("A := (tl VAR1)");
+            List<String> result = new LinkedList<>();
+            Let.toCode(result, tree);
+            assertArrayEquals(new String[]{
+                    "A = VAR1",
+            }, result.toArray());
+        }
     }
 }

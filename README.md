@@ -27,3 +27,6 @@ Projet : Le compilateur While
 - [x] Let avec arbre de taille > 1
 - [x] Let avec plusieurs variables
 - [x] Let avec `nil`
+- [ ] Let avec une liste vide : **TODO ne fonctionne pas**
+- [x] Let avec une liste de taille 1
+- [x] Let avec une liste de taille > 1
