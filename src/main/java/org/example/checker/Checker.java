@@ -71,10 +71,16 @@ public class Checker {
             return;
 
         String name = tree.getText();
+        int nArgs = tree.getParent().getChildCount()-1;
         try {
+
             if(!(stack.get(name) instanceof FunctionType)){
                 throw new NotDeclaredException(filename, tree, name, FunctionType.class);
             }
+            FunctionType f = ((FunctionType) stack.get(name));
+            if(nArgs != f.getArgs())
+                throw new BadAmountArgument(filename, tree, f, nArgs);
+
         } catch (NotFoundException e) {
             throw new NotDeclaredException(filename, tree, name, FunctionType.class);
         } catch (StackException e) {
