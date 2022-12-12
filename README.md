@@ -16,3 +16,14 @@ Projet : Le compilateur While
 - [x] If avec else
 - [x] If avec variable comme condition
 - [x] If avec appel de fonction comme condition
+
+### Let
+
+- [x] Let avec variable
+- [x] Let avec appel de fonction sans paramètre
+- [x] Let avec appel de fonction avec plusieurs paramètres
+- [ ] Let avec arbre vide : **TODO ne fonctionne pas**
+- [x] Let avec arbre de taille 1
+- [x] Let avec arbre de taille > 1
+- [x] Let avec plusieurs variables
+- [x] Let avec `nil`

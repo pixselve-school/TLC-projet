@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Expression implements Element {
+
+    public static void reset() {
+        counter = 0;
+    }
+
     private static int counter = 0;
     private final Tree tree;
 
@@ -72,7 +77,24 @@ public class Expression implements Element {
                     counter++;
                     return result;
                 } else {
-                    throw new RuntimeException("NOT IMPLEMENTED");
+                    LinkedList<String> prepend = new LinkedList<>();
+                    for (int childCount = tree.getChildCount() - 1; childCount >= 0; childCount--) {
+                        Compose expr = new Expression(tree.getChild(childCount)).toCode();
+                        prepend.addAll(expr.prepend);
+                        if (childCount == tree.getChildCount() - 1) {
+                            prepend.add("R_%d[1] = %s".formatted(counter, expr.value));
+                        } else {
+                            prepend.add("R_%d[0] = %s".formatted(counter, expr.value));
+                            if (childCount != 0) {
+                                prepend.add("R_%d[1] = R_%d".formatted(counter + 1, counter));
+                                counter++;
+                            }
+                        }
+                    }
+
+                    Compose result = new Compose(prepend, "R_%d".formatted(counter));
+                    counter++;
+                    return result;
                 }
             }
             case WhileParser.TL -> {

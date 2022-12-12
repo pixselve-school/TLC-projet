@@ -29,6 +29,7 @@ public class Compiler {
     public static void reset() {
         forCount = 0;
         ifCount = 0;
+        Expression.reset();
     }
 
     static void compile(Tree tree, List<String> current) {
