@@ -77,4 +77,3 @@ Symbol	:	Min(Maj|Min|Dec)*('!'|'?')?;
 fragment Maj	:	'A'..'Z';
 fragment Min	:	'a'..'z';
 fragment Dec	:	'0'..'9';
-	

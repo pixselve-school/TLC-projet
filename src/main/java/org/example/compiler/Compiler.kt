@@ -1,58 +1,55 @@
-package org.example.compiler;
+package org.example.compiler
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.Tree;
-import org.example.WhileLexer;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-public class Compiler {
+import org.antlr.runtime.ANTLRStringStream
+import org.antlr.runtime.CharStream
+import org.antlr.runtime.CommonTokenStream
+import org.antlr.runtime.RecognitionException
+import org.antlr.runtime.tree.CommonTree
+import org.antlr.runtime.tree.Tree
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.util.*
+import org.example.WhileLexer
+import org.example.WhileParser
 
-    static int forCount = 0;
-    static int ifCount = 0;
 
-    public static List<String> compile(Tree tree) {
-        LinkedList<String> result = new LinkedList<>();
-        compile(tree, result);
-        return result;
+object Compiler {
+    var forCount = 0
+    var ifCount = 0
+    @JvmStatic
+    fun compile(tree: Tree): List<String> {
+        val result = mutableListOf<String>();
+        compile(tree, result)
+        return result
     }
 
-    public static void reset() {
-        forCount = 0;
-        ifCount = 0;
-        Expression.reset();
+    @JvmStatic
+    fun reset() {
+        forCount = 0
+        ifCount = 0
+        Expression.reset()
     }
 
-    static void compile(Tree tree, List<String> current) {
-
-
-        int nodeType = tree.getType();
-        switch (nodeType) {
-            case WhileLexer.PROGRAM -> {
-                ArrayList<Tree> children = getChildren(tree);
-                for (Tree child : children) {
-                    compile(child, current);
+    fun compile(tree: Tree, current: MutableList<String>) {
+        val nodeType = tree.type
+        when (nodeType) {
+            WhileLexer.PROGRAM -> {
+                val children = getChildren(tree)
+                for (child in children) {
+                    compile(child, current)
                 }
             }
-            case WhileLexer.FUNCTION -> Function.toCode(current, tree);
-            case WhileLexer.COMMANDS -> compile(tree.getChild(0), current);
-            case WhileLexer.IF -> If.toCode(current, tree, ifCount++);
-            case WhileLexer.LET -> Let.toCode(current, tree);
-            case WhileLexer.FOR -> For.toCode(current, tree, forCount++);
-            case WhileLexer.NOP -> {
 
-            }
-
-            default -> throw new RuntimeException("Unknown node type: " + nodeType);
+            WhileLexer.FUNCTION -> Function.toCode(current, tree)
+            WhileLexer.COMMANDS -> compile(tree.getChild(0), current)
+            WhileLexer.IF -> If.toCode(current, tree, ifCount++)
+            WhileLexer.LET -> Let.toCode(current, tree)
+            WhileLexer.FOR -> For.toCode(current, tree, forCount++)
+            WhileLexer.NOP -> {}
+            else -> throw RuntimeException("Unknown node type: $nodeType")
         }
     }
 
@@ -62,33 +59,32 @@ public class Compiler {
      * @param tree The node.
      * @return The children.
      */
-    public static ArrayList<Tree> getChildren(Tree tree) {
-        ArrayList<Tree> children = new ArrayList<>();
-        int i = 0;
+    @JvmStatic
+    fun getChildren(tree: Tree): ArrayList<Tree> {
+        val children = ArrayList<Tree>()
+        var i = 0
         while (true) {
-            Tree child = tree.getChild(i);
-            if (child == null) {
-                break;
-            }
-            children.add(child);
-            i++;
+            val child = tree.getChild(i) ?: break
+            children.add(child)
+            i++
         }
-        return children;
+        return children
     }
 
-    public static void main(String[] args) throws IOException, RecognitionException {
-        String path = "src/main/resources/and.txt";
-        String txt = Files.readString(Path.of(path));
-        CharStream cs = new ANTLRStringStream(txt);
-        org.example.WhileLexer lexer = new org.example.WhileLexer(cs);
-        CommonTokenStream cts = new CommonTokenStream(lexer);
-        org.example.WhileParser parser = new org.example.WhileParser(cts);
-        org.example.WhileParser.program_return program = parser.program();
-
-        CommonTree tree = (CommonTree) program.getTree();
-        List<String> list = compile(tree);
-        for (String s : list) {
-            System.out.println(s);
+    @Throws(IOException::class, RecognitionException::class)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val path = "src/main/resources/and.txt"
+        val txt = Files.readString(Path.of(path))
+        val cs: CharStream = ANTLRStringStream(txt)
+        val lexer = WhileLexer(cs)
+        val cts = CommonTokenStream(lexer)
+        val parser = WhileParser(cts)
+        val program = parser.program()
+        val tree = program.tree as CommonTree
+        val list = compile(tree)
+        for (s in list) {
+            println(s)
         }
     }
 }

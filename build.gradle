@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'antlr'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0-RC'
 }
 
 group 'org.example'
@@ -13,9 +14,25 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    antlr "org.antlr:antlr:3.5.2"
+    antlr "org.antlr:antlr:3.5.3"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
     useJUnitPlatform()
+}
+
+
+compileKotlin {
+    // compile antlr grammar
+    dependsOn generateGrammarSource
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    dependsOn generateGrammarSource
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
