@@ -4,10 +4,12 @@ import org.antlr.runtime.*;
 import org.antlr.runtime.tree.CommonTree;
 import org.example.checker.Checker;
 import org.example.checker.exception.CheckerException;
+import org.example.compiler.Compiler;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class Main {
   public static void main(String[] args) throws IOException, RecognitionException, CheckerException {
@@ -25,6 +27,10 @@ public class Main {
 
     checker.check();
 
-    System.out.println(tree.toStringTree());
+    List<String> result = Compiler.compile(tree);
+
+    for(String s : result){
+      System.out.println(s);
+    }
   }
 }

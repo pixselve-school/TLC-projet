@@ -65,7 +65,6 @@ public class Checker {
             }
         }
     }
-    // TODO check enough arguments
     private void parseGetFunc(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         if(tree.getType() != WhileLexer.Symbol)
             return;
@@ -74,10 +73,9 @@ public class Checker {
         int nArgs = tree.getParent().getChildCount()-1;
         try {
 
-            if(!(stack.get(name) instanceof FunctionType)){
+            if(!(stack.get(name) instanceof FunctionType f)){
                 throw new NotDeclaredException(filename, tree, name, FunctionType.class);
             }
-            FunctionType f = ((FunctionType) stack.get(name));
             if(nArgs != f.getArgs())
                 throw new BadAmountArgument(filename, tree, f, nArgs);
 
@@ -108,9 +106,7 @@ public class Checker {
             String name = ((CommonTree)child).getText();
 
             try {
-                if(stack.get(name) instanceof VariableType){
-
-                }
+                stack.get(name);
             } catch (NotFoundException e) {
                 try {
                     stack.newSet(name, new VariableType(name, tree.getLine()));
@@ -167,7 +163,7 @@ public class Checker {
         try {
             stack.newSet(name.getText(), new FunctionType(name.getText(), tree.getLine(), inputs.getChildCount()));
         } catch (AlreadyExistException e) {
-            int line = 0;
+            int line;
             try {
                 line = ((FunctionType)stack.get(name.getText())).getLine();
             } catch (StackException ex) {
