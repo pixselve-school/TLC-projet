@@ -5,6 +5,7 @@ import org.antlr.runtime.tree.CommonTree;
 import org.example.checker.Checker;
 import org.example.checker.exception.CheckerException;
 import org.example.compiler.Compiler;
+import org.example.optimizer.Optimizer;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +30,9 @@ public class Main {
 
     List<String> result = Compiler.compile(tree);
 
-    for(String s : result){
+    List<String> optimized = Optimizer.optimize(result);
+
+    for(String s : optimized){
       System.out.println(s);
     }
   }
