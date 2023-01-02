@@ -16,7 +16,8 @@ public class Translator {
     int n;
     int tabs;
 
-    final static String PARAMS_STACK = "params";
+    final static String PARAMS_STACK = "paramsStack";
+    final static String PARAMS_STACK_FUNC = "paramsStackFunc";
     final static String RETURN_STACK = "returnStack";
 
 
@@ -26,27 +27,146 @@ public class Translator {
 
         List<String> line;
         while((line = getNext()) != null) {
-            String firstWord = line.get(0);
-
-            switch (firstWord){
-                case "func" -> func(line);
-                case "return" -> ret(line);
-                case "Return" -> Ret(line);
-                case "if" -> If(line);
-            }
-            if(firstWord.startsWith("for_"))
-                While();
-            if(line.size() >= 2 && line.get(1).equals("="))
-                assign(line);
-            throw new OptimizeException(getLine(), "No operation found");
+            translateLine(line);
         }
 
         return res;
     }
 
+    private void translateLine(List<String> line) throws OptimizeException {
+        String firstWord = line.get(0);
+
+        switch (firstWord){
+            case "func" -> func(line);
+            case "return" -> ret(line);
+            case "Return" -> Ret(line);
+            case "if" -> If(line);
+            case "param" -> param(line);
+            case "call" -> call(line);
+            case "goto" -> {}
+            default -> {
+                if(firstWord.startsWith("for_"))
+                    While(line);
+                else if(line.size() >= 2 && line.get(1).equals("="))
+                    assign(line);
+                else throw new OptimizeException(getLine(), "No operation found");
+            }
+        }
+    }
+
+    private void call(List<String> line) throws NumberOfArgumentException {
+        if(line.size() != 3)
+            throw new NumberOfArgumentException(getLine());
+        addLine(line.get(1) + "("+PARAMS_STACK+")");
+        clearParam();
+    }
+
+    private void clearParam(){
+        addLine(PARAMS_STACK + " = []");
+    }
+
+    private void param(List<String> line) {
+        String var = line.get(1);
+        addLine(PARAMS_STACK + ".push(" + var + ")");
+    }
+
+    private void While(List<String> line) throws OptimizeException {
+        String label = line.get(0);
+        line = getNext();
+        addLine("while(!"+line.get(1)+"){");
+        tabs++;
+
+        line = getNext();
+        while(true){
+            if(line.size() == 2 && line.get(0).equals("goto") && (line.get(1) + ":").equals(label)){
+                getNext();
+                break;
+            }
+
+            translateLine(line);
+            line = getNext();
+        }
+
+        tabs--;
+        addLine("}");
+    }
+
+    private void If(List<String> line) throws OptimizeException {
+        addLine("if("+line.get(1)+"){");
+
+        tabs++;
+
+        String label1 = line.get(3) + ":";
+        String endLabel = "";
+
+        List<String> lastLine = line;
+        line = getNext();
+
+        while(true){
+            if(line.get(0).equals(label1)){
+                if(lastLine.get(0).equals("goto")) {
+                    endLabel = lastLine.get(1) + ":";
+                    tabs--;
+                    addLine("}else{");
+                    tabs++;
+                }else{
+                    break;
+                }
+            }else if(line.get(0).equals(endLabel)){
+                break;
+            } else {
+                translateLine(line);
+            }
+            lastLine = line;
+            line = getNext();
+        }
+
+        tabs--;
+        addLine("}");
+    }
+
+    private void assign(List<String> line) throws NumberOfArgumentException {
+        if(line.size() < 3)
+            throw new NumberOfArgumentException(getLine());
+
+        String leftName = line.get(0);
+        String right = line.get(2);
+
+        if(right.equals("nil"))
+            right = "null";
+
+        boolean clearParams = false;
+
+        if(line.size() == 5){
+            right = line.get(3) + "("+PARAMS_STACK+")";
+            clearParams = true;
+        }
+
+
+        int bracLeft = leftName.indexOf("[");
+        int n = -1;
+        if(bracLeft != -1){
+            n = Integer.parseInt(
+                    leftName.substring(bracLeft+1, leftName.length()-1)
+            );
+            leftName = leftName.substring(0, bracLeft);
+        }
+
+        if(!variables.contains(leftName)){
+            variables.add(leftName);
+            if(n != -1){
+                addLine(leftName + " = []");
+            }
+        }
+        addLine(line.get(0) + " = " + right);
+        if(clearParams)
+            clearParam();
+
+    }
+
     private void ret(List<String> line) throws NumberOfArgumentException {
         assertSize(line, 2);
-        addLine("");
+        addLine(RETURN_STACK + ".push(" +line.get(1)+ ")");
     }
 
     private void Ret(List<String> line) {
@@ -59,14 +179,15 @@ public class Translator {
     }
 
     private void func(List<String> line) throws OptimizeException {
+        variables.clear();
         assertSize(line, 2);
         if(line.get(1).equals("begin")){
             assertSize(line, 3);
-            int n = Integer.parseInt(line.get(2));
 
-            addLine("function " + line.get(2) + "("+PARAMS_STACK+"){");
+            addLine("function " + line.get(2) + "("+PARAMS_STACK_FUNC+"){");
             tabs++;
             addLine("let " + RETURN_STACK + " = []");
+            addLine("let " + PARAMS_STACK + " = []");
         }else if(line.get(1).equals("end")){
             tabs--;
             addLine("}");
