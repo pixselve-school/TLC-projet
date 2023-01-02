@@ -19,6 +19,7 @@ public class Translator {
     final static String PARAMS_STACK = "paramsStack";
     final static String PARAMS_STACK_FUNC = "paramsStackFunc";
     final static String RETURN_STACK = "returnStack";
+    final static String PREFIX = "tlc_";
 
 
     public List<String> translate(List<String> strs) throws OptimizeException {
@@ -57,7 +58,7 @@ public class Translator {
     private void call(List<String> line) throws NumberOfArgumentException {
         if(line.size() != 3)
             throw new NumberOfArgumentException(getLine());
-        addLine(line.get(1) + "("+PARAMS_STACK+")");
+        addLine(PREFIX+line.get(1) + "("+PARAMS_STACK+")");
         clearParam();
     }
 
@@ -138,7 +139,7 @@ public class Translator {
         boolean clearParams = false;
 
         if(line.size() == 5){
-            right = line.get(3) + "("+PARAMS_STACK+")";
+            right = PREFIX+line.get(3) + "("+PARAMS_STACK+")";
             clearParams = true;
         }
 
@@ -184,7 +185,7 @@ public class Translator {
         if(line.get(1).equals("begin")){
             assertSize(line, 3);
 
-            addLine("function " + line.get(2) + "("+PARAMS_STACK_FUNC+"){");
+            addLine("function " + PREFIX+line.get(2) + "("+PARAMS_STACK_FUNC+"){");
             tabs++;
             addLine("let " + RETURN_STACK + " = []");
             addLine("let " + PARAMS_STACK + " = []");
