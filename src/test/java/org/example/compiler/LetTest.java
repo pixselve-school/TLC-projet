@@ -145,7 +145,6 @@ class LetTest {
                 "R_3[1] = nil",
                 "A = R_3",
         }, result.toArray());
-        System.out.println(result);
     }
 
     @Nested
