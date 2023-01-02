@@ -69,6 +69,13 @@ function mul :
     %
     write Result
 
+function getFabien :
+    read
+    %
+        Result := (cons (cons (cons (cons ceci est) une) liste) nil)
+    %
+    write Result
+
 function main :
     read
     %
