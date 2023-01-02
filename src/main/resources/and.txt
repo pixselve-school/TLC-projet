@@ -1,13 +1,13 @@
-// true constant (for lisibility)
-function true :
+// truef constant (for lisibility)
+function truef :
     read
     %
         Result := (cons nil nil)
     %
     write Result
 
-// false constant (for lisibility)
-function false :
+// falsef constant (for lisibility)
+function falsef :
     read
     %
         Result := nil
@@ -18,7 +18,7 @@ function false :
 function not :
     read Op1
     %
-        if Op1 then Result := (false) else Result := (true) fi
+        if Op1 then Result := (falsef) else Result := (truef) fi
     %
     write Result
 
@@ -27,12 +27,12 @@ function and :
     read Op1, Op2
     %
         if (not Op1) then
-            Result := (false)
+            Result := (falsef)
         else
             if (not Op2) then
-                Result := (false)
+                Result := (falsef)
             else
-                Result := (true)
+                Result := (truef)
             fi
         fi
     %
