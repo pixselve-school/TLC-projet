@@ -1,140 +1,166 @@
-package org.example.compiler;
+package org.example.compiler
 
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.Tree;
-import org.example.Utils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.antlr.runtime.RecognitionException
+import org.antlr.runtime.tree.Tree
+import org.example.Utils
+import org.example.compiler.Compiler.reset
+import org.example.compiler.Let.toCode
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import java.util.*
 
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
-class LetTest {
-
+internal class LetTest {
     @BeforeEach
-    void setUp() {
-        Compiler.reset();
+    fun setUp() {
+        reset()
     }
 
-    Tree getTreeForCode(String code) throws RecognitionException {
-        Tree tree = Utils.getTreeFromString("function test: read A % " + code + " % write B");
-        return tree.getChild(0).getChild(2).getChild(0);
+    @Throws(RecognitionException::class)
+    fun getTreeForCode(code: String): Tree {
+        val tree = Utils.getTreeFromString("function test: read A % $code % write B")
+        return tree.getChild(0).getChild(2).getChild(0)
     }
 
     @Test
-    void variableEqualVariable() throws RecognitionException {
-        Tree tree = getTreeForCode("A := B");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun `should associate a variable to another variable`() {
+        val tree = getTreeForCode("A := B")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "A = B"
-        }, result.toArray());
-
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void multipleVariablesEqualMultipleVariables() throws RecognitionException {
-        Tree tree = getTreeForCode("A, B, C := D, E, F");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun `should associate multiple variables to multiple variables`() {
+        val tree = getTreeForCode("A, B, C := D, E, F")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "A = D",
                 "B = E",
                 "C = F"
-        }, result.toArray());
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void variableEqualNil() throws RecognitionException {
-        Tree tree = getTreeForCode("A := nil");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun `should be nil`() {
+        val tree = getTreeForCode("A := nil")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "A = nil"
-        }, result.toArray());
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void variableEqualFunctionCallNoParameters() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (name)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun variableEqualFunctionCallNoParameters() {
+        val tree = getTreeForCode("A := (name)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "R_0 = call name 0",
                 "R_1 = R_0[0]",
                 "A = R_1"
-        }, result.toArray());
+            ), result.toTypedArray()
+        )
     }
 
-
     @Test
-    void variableEqualFunctionCallOneParameter() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (name VAR1)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun variableEqualFunctionCallOneParameter() {
+        val tree = getTreeForCode("A := (name VAR1)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "param VAR1",
                 "R_0 = call name 1",
                 "R_1 = R_0[0]",
                 "A = R_1"
-        }, result.toArray());
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void buildEmptyTree() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (cons)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
-                "A = nil",
-        }, result.toArray());
+    @Throws(RecognitionException::class)
+    fun buildEmptyTree() {
+        val tree = getTreeForCode("A := (cons)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
+                "A = nil"
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void buildOneElementTree() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (cons VAR1)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
-                "A = VAR1",
-        }, result.toArray());
+    @Throws(RecognitionException::class)
+    fun buildOneElementTree() {
+        val tree = getTreeForCode("A := (cons VAR1)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
+                "A = VAR1"
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void buildTwoElementsTree() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (cons VAR1 VAR2)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun buildTwoElementsTree() {
+        val tree = getTreeForCode("A := (cons VAR1 VAR2)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "R_0[0] = VAR1",
                 "R_0[1] = VAR2",
-                "A = R_0",
-        }, result.toArray());
+                "A = R_0"
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void buildTreeElementsTree() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (cons VAR1 VAR2 VAR3)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun buildTreeElementsTree() {
+        val tree = getTreeForCode("A := (cons VAR1 VAR2 VAR3)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "R_0[1] = VAR3",
                 "R_0[0] = VAR2",
                 "R_1[1] = R_0",
                 "R_1[0] = VAR1",
-                "A = R_1",
-        }, result.toArray());
+                "A = R_1"
+            ), result.toTypedArray()
+        )
     }
 
     @Test
-    void buildString() throws RecognitionException {
-        Tree tree = getTreeForCode("A := (cons (cons (cons (cons ceci est) une) liste) nil)");
-        List<String> result = new LinkedList<>();
-        Let.toCode(result, tree);
-        assertArrayEquals(new String[]{
+    @Throws(RecognitionException::class)
+    fun buildString() {
+        val tree = getTreeForCode("A := (cons (cons (cons (cons ceci est) une) liste) nil)")
+        val result = mutableListOf<String>()
+        toCode(result, tree)
+        Assertions.assertArrayEquals(
+            arrayOf(
                 "R_0[0] = ceci",
                 "R_0[1] = est",
                 "R_1[0] = R_0",
@@ -143,110 +169,135 @@ class LetTest {
                 "R_2[1] = liste",
                 "R_3[0] = R_2",
                 "R_3[1] = nil",
-                "A = R_3",
-        }, result.toArray());
+                "A = R_3"
+            ), result.toTypedArray()
+        )
     }
 
     @Nested
-    class ListTest {
+    internal inner class ListTest {
         @Test
-        void empty() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (list)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
-                    "A = nil",
-            }, result.toArray());
+        @Throws(RecognitionException::class)
+        fun empty() {
+            val tree = getTreeForCode("A := (list)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
+                    "A = nil"
+                ), result.toTypedArray()
+            )
         }
 
         @Test
-        void oneElement() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (list VAR1)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
+        @Throws(RecognitionException::class)
+        fun oneElement() {
+            val tree = getTreeForCode("A := (list VAR1)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
                     "R_0[0] = VAR1",
                     "R_0[1] = nil",
-                    "A = R_0",
-            }, result.toArray());
+                    "A = R_0"
+                ), result.toTypedArray()
+            )
         }
 
         @Test
-        void twoElements() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (list VAR1 VAR2)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            System.out.println(result);
-            assertArrayEquals(new String[]{
+        @Throws(RecognitionException::class)
+        fun twoElements() {
+            val tree = getTreeForCode("A := (list VAR1 VAR2)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            println(result)
+            Assertions.assertArrayEquals(
+                arrayOf(
                     "R_0[1] = nil",
                     "R_0[0] = VAR2",
                     "R_1[0] = VAR1",
                     "R_1[1] = R_0",
-                    "A = R_1",
-            }, result.toArray());
+                    "A = R_1"
+                ), result.toTypedArray()
+            )
         }
 
         @Test
-        void threeElements() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (list VAR1 VAR2 VAR3)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            System.out.println(result);
-            assertArrayEquals(new String[]{
+        @Throws(RecognitionException::class)
+        fun threeElements() {
+            val tree = getTreeForCode("A := (list VAR1 VAR2 VAR3)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            println(result)
+            Assertions.assertArrayEquals(
+                arrayOf(
                     "R_0[1] = nil",
                     "R_0[0] = VAR3",
                     "R_1[0] = VAR2",
                     "R_1[1] = R_0",
                     "R_2[0] = VAR1",
                     "R_2[1] = R_1",
-                    "A = R_2",
-            }, result.toArray());
+                    "A = R_2"
+                ), result.toTypedArray()
+            )
         }
     }
 
     @Nested
-    class HdTest {
+    internal inner class HdTest {
         @Test
-        void nil() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (hd nil)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
-                    "A = nil",
-            }, result.toArray());
+        @Throws(RecognitionException::class)
+        fun nil() {
+            val tree = getTreeForCode("A := (hd nil)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
+                    "A = nil"
+                ), result.toTypedArray()
+            )
         }
 
         @Test
-        void oneElement() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (hd VAR1)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
-                    "A = VAR1",
-            }, result.toArray());
+        @Throws(RecognitionException::class)
+        fun oneElement() {
+            val tree = getTreeForCode("A := (hd VAR1)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
+                    "A = VAR1"
+                ), result.toTypedArray()
+            )
         }
     }
 
     @Nested
-    class TlTest {
+    internal inner class TlTest {
         @Test
-        void nil() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (tl nil)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
-                    "A = nil",
-            }, result.toArray());
+        @Throws(RecognitionException::class)
+        fun nil() {
+            val tree = getTreeForCode("A := (tl nil)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
+                    "A = nil"
+                ), result.toTypedArray()
+            )
         }
 
         @Test
-        void oneElement() throws RecognitionException {
-            Tree tree = getTreeForCode("A := (tl VAR1)");
-            List<String> result = new LinkedList<>();
-            Let.toCode(result, tree);
-            assertArrayEquals(new String[]{
-                    "A = VAR1",
-            }, result.toArray());
+        @Throws(RecognitionException::class)
+        fun oneElement() {
+            val tree = getTreeForCode("A := (tl VAR1)")
+            val result = mutableListOf<String>()
+            toCode(result, tree)
+            Assertions.assertArrayEquals(
+                arrayOf(
+                    "A = VAR1"
+                ), result.toTypedArray()
+            )
         }
     }
 }
