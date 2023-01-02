@@ -156,9 +156,11 @@ class Expression(private val tree: Tree) : Element {
                     }
                 }
             }
-
+            WhileParser.Symbol -> {
+                Compose(emptyList(), tree.text)
+            }
             else -> {
-                throw RuntimeException("NOT IMPLEMENTED")
+                throw RuntimeException("NOT IMPLEMENTED: ${tree.type}")
             }
         }
     }

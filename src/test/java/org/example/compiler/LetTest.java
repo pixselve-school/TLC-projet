@@ -129,6 +129,25 @@ class LetTest {
         }, result.toArray());
     }
 
+    @Test
+    void buildString() throws RecognitionException {
+        Tree tree = getTreeForCode("A := (cons (cons (cons (cons ceci est) une) liste) nil)");
+        List<String> result = new LinkedList<>();
+        Let.toCode(result, tree);
+        assertArrayEquals(new String[]{
+                "R_0[0] = ceci",
+                "R_0[1] = est",
+                "R_1[0] = R_0",
+                "R_1[1] = une",
+                "R_2[0] = R_1",
+                "R_2[1] = liste",
+                "R_3[0] = R_2",
+                "R_3[1] = nil",
+                "A = R_3",
+        }, result.toArray());
+        System.out.println(result);
+    }
+
     @Nested
     class ListTest {
         @Test
