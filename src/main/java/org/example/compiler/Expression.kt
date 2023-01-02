@@ -32,8 +32,11 @@ class Expression(private val tree: Tree) : Element {
                 for (arg in args) {
                     prepend.add("param $arg")
                 }
+                // TODO: find a better way to treat function return value
                 prepend.add("R_$counter = call $name ${args.size}")
-                val result = Compose(prepend, "R_$counter")
+                prepend.add("R_${counter + 1} = R_$counter[0]")
+                counter++;
+                val result = Compose(prepend, "R_${counter}")
                 counter++
                 result
             }
@@ -47,39 +50,44 @@ class Expression(private val tree: Tree) : Element {
             }
 
             WhileParser.CONS -> {
-                if (tree.childCount == 0) {
-                    Compose(emptyList(), "nil")
-                } else if (tree.childCount == 1) {
-                    Compose(emptyList(), tree.getChild(0).text)
-                } else if (tree.childCount == 2) {
-                    val first = Expression(tree.getChild(0)).toCode()
-                    val second = Expression(tree.getChild(1)).toCode()
-                    val prepend = LinkedList<String>()
-                    prepend.addAll(first.prepend)
-                    prepend.addAll(second.prepend)
-                    prepend.add("R_$counter[0] = ${first.value}")
-                    prepend.add("R_$counter[1] = ${second.value}")
-                    val result = Compose(prepend, "R_$counter")
-                    counter++
-                    result
-                } else {
-                    val prepend = LinkedList<String>()
-                    for (childCount in tree.childCount - 1 downTo 0) {
-                        val expr = Expression(tree.getChild(childCount)).toCode()
-                        prepend.addAll(expr.prepend)
-                        if (childCount == tree.childCount - 1) {
-                            prepend.add("R_$counter[1] = ${expr.value}")
-                        } else {
-                            prepend.add("R_$counter[0] = ${expr.value}")
-                            if (childCount != 0) {
-                                prepend.add("R_${counter + 1}[1] = R_$counter")
-                                counter++
+                when (tree.childCount) {
+                    0 -> {
+                        Compose(emptyList(), "nil")
+                    }
+                    1 -> {
+                        Compose(emptyList(), tree.getChild(0).text)
+                    }
+                    2 -> {
+                        val first = Expression(tree.getChild(0)).toCode()
+                        val second = Expression(tree.getChild(1)).toCode()
+                        val prepend = LinkedList<String>()
+                        prepend.addAll(first.prepend)
+                        prepend.addAll(second.prepend)
+                        prepend.add("R_$counter[0] = ${first.value}")
+                        prepend.add("R_$counter[1] = ${second.value}")
+                        val result = Compose(prepend, "R_$counter")
+                        counter++
+                        result
+                    }
+                    else -> {
+                        val prepend = LinkedList<String>()
+                        for (childCount in tree.childCount - 1 downTo 0) {
+                            val expr = Expression(tree.getChild(childCount)).toCode()
+                            prepend.addAll(expr.prepend)
+                            if (childCount == tree.childCount - 1) {
+                                prepend.add("R_$counter[1] = ${expr.value}")
+                            } else {
+                                prepend.add("R_$counter[0] = ${expr.value}")
+                                if (childCount != 0) {
+                                    prepend.add("R_${counter + 1}[1] = R_$counter")
+                                    counter++
+                                }
                             }
                         }
+                        val result = Compose(prepend, "R_$counter")
+                        counter++
+                        result
                     }
-                    val result = Compose(prepend, "R_$counter")
-                    counter++
-                    result
                 }
             }
 
@@ -115,33 +123,37 @@ class Expression(private val tree: Tree) : Element {
             }
 
             WhileParser.LIST -> {
-                if (tree.childCount == 0) {
-                    Compose(emptyList(), "nil")
-                } else if (tree.childCount == 1) {
-                    val expr = Expression(tree.getChild(0)).toCode()
-                    val prepend = LinkedList(expr.prepend)
-                    prepend.add("R_$counter[0] = ${expr.value}")
-                    prepend.add("R_$counter[1] = nil")
-                    val result = Compose(prepend, "R_$counter")
-                    counter++
-                    result
-                } else {
-                    val prepend = LinkedList<String>()
-                    for (childCount in tree.childCount - 1 downTo 0) {
-                        val expr = Expression(tree.getChild(childCount)).toCode()
-                        prepend.addAll(expr.prepend)
-                        if (childCount == tree.childCount - 1) {
-                            prepend.add("R_$counter[1] = nil")
-                            prepend.add("R_$counter[0] = ${expr.value}")
-                        } else {
-                            prepend.add("R_${counter + 1}[0] = ${expr.value}")
-                            prepend.add("R_${counter + 1}[1] = R_$counter")
-                            counter++
-                        }
+                when (tree.childCount) {
+                    0 -> {
+                        Compose(emptyList(), "nil")
                     }
-                    val result = Compose(prepend, "R_$counter")
-                    counter++
-                    result
+                    1 -> {
+                        val expr = Expression(tree.getChild(0)).toCode()
+                        val prepend = LinkedList(expr.prepend)
+                        prepend.add("R_$counter[0] = ${expr.value}")
+                        prepend.add("R_$counter[1] = nil")
+                        val result = Compose(prepend, "R_$counter")
+                        counter++
+                        result
+                    }
+                    else -> {
+                        val prepend = LinkedList<String>()
+                        for (childCount in tree.childCount - 1 downTo 0) {
+                            val expr = Expression(tree.getChild(childCount)).toCode()
+                            prepend.addAll(expr.prepend)
+                            if (childCount == tree.childCount - 1) {
+                                prepend.add("R_$counter[1] = nil")
+                                prepend.add("R_$counter[0] = ${expr.value}")
+                            } else {
+                                prepend.add("R_${counter + 1}[0] = ${expr.value}")
+                                prepend.add("R_${counter + 1}[1] = R_$counter")
+                                counter++
+                            }
+                        }
+                        val result = Compose(prepend, "R_$counter")
+                        counter++
+                        result
+                    }
                 }
             }
 

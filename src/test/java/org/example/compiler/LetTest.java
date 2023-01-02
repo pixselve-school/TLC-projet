@@ -64,9 +64,11 @@ class LetTest {
         Let.toCode(result, tree);
         assertArrayEquals(new String[]{
                 "R_0 = call name 0",
-                "A = R_0"
+                "R_1 = R_0[0]",
+                "A = R_1"
         }, result.toArray());
     }
+
 
     @Test
     void variableEqualFunctionCallOneParameter() throws RecognitionException {
@@ -76,7 +78,8 @@ class LetTest {
         assertArrayEquals(new String[]{
                 "param VAR1",
                 "R_0 = call name 1",
-                "A = R_0"
+                "R_1 = R_0[0]",
+                "A = R_1"
         }, result.toArray());
     }
 
