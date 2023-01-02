@@ -18,6 +18,10 @@ public class Checker {
     String filename;
     String[] fileText;
 
+    boolean foundMain = false;
+
+    final static String MAIN_FUNCTION = "main";
+
     public Checker(CommonTree tree, String filename, String fileText) {
         this.tree = tree;
         this.filename = filename;
@@ -28,6 +32,10 @@ public class Checker {
         try{
             SpaghettiWrapper<Type> stack = new SpaghettiWrapper<>();
             symbolTable(stack, tree);
+
+            if(!foundMain)
+                throw new MainNotFoundException(filename, tree);
+
             return true;
         }catch (CheckerException e){
             int line = e.getLine();
@@ -159,6 +167,9 @@ public class Checker {
         CommonTree inputs = (CommonTree) tree.getChild(1);
         CommonTree commands = (CommonTree) tree.getChild(2);
         CommonTree outputs = (CommonTree) tree.getChild(3);
+
+        if(name.getText().equals(MAIN_FUNCTION))
+            foundMain = true;
 
         try {
             stack.newSet(name.getText(), new FunctionType(name.getText(), tree.getLine(), inputs.getChildCount()));

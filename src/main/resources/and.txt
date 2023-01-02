@@ -68,3 +68,10 @@ function mul :
         od
     %
     write Result
+
+function main :
+    read
+    %
+        A := nil
+    %
+    write A
