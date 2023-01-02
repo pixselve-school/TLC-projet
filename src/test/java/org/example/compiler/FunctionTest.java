@@ -28,6 +28,7 @@ class FunctionTest {
         Function.toCode(result, tree);
         assertArrayEquals(new String[]{
                 "func begin test",
+                "get A",
                 "return B",
                 "Return",
                 "func end"
@@ -42,6 +43,7 @@ class FunctionTest {
         Function.toCode(result, tree);
         assertArrayEquals(new String[]{
                 "func begin test",
+                "get A",
                 "return B",
                 "return C",
                 "Return",
@@ -69,6 +71,8 @@ class FunctionTest {
         Function.toCode(result, tree);
         assertArrayEquals(new String[]{
                 "func begin test",
+                "get A",
+                "get B",
                 "return B",
                 "Return",
                 "func end"

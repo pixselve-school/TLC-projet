@@ -18,13 +18,30 @@ object Function : Element {
         return result
     }
 
+    private fun parseInput(tree: Tree): LinkedList<String> {
+        if (tree.type != WhileLexer.INPUTS) {
+            throw RuntimeException("Expected INPUTS node")
+        }
+        val result = LinkedList<String>()
+        val inputs = Compiler.getChildren(tree)
+        for (input in inputs) {
+            result.add(input.text)
+        }
+        return result
+    }
+
     @JvmStatic
     fun toCode(result: MutableList<String>, tree: Tree) {
         val name = tree.getChild(0).text
+        val inputs = tree.getChild(1)
+        val inputsParsed = parseInput(inputs)
         val output = tree.getChild(3)
         val outputParsed = parseOutput(output)
         val body = tree.getChild(2)
         result.add("func begin $name")
+        for (input in inputsParsed) {
+            result.add("get $input")
+        }
         Compiler.compile(body, result)
         for (s in outputParsed) {
             result.add("return $s")
