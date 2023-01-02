@@ -45,6 +45,7 @@ public class Translator {
             case "param" -> param(line);
             case "call" -> call(line);
             case "goto" -> {}
+            case "get" -> get(line);
             default -> {
                 if(firstWord.startsWith("for_"))
                     While(line);
@@ -53,6 +54,10 @@ public class Translator {
                 else throw new OptimizeException(getLine(), "No operation found");
             }
         }
+    }
+
+    private void get(List<String> line) {
+        addLine(line.get(1) + " = " + PARAMS_STACK_FUNC + ".shift()");
     }
 
     private void call(List<String> line) throws NumberOfArgumentException {
