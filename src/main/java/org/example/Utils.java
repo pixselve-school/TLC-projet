@@ -16,6 +16,7 @@ import java.util.List;
 public class Utils {
 
     final static String LIBS_PATH = "src/main/resources/lib";
+    final static String NUMBER_OF_MAIN_ARGS = "NUMBER_OF_MAIN_ARGS";
 
     public static Tree getTreeFromString(String txt) throws RecognitionException {
         CharStream cs = new ANTLRStringStream(txt);
@@ -27,8 +28,10 @@ public class Utils {
         return (CommonTree) program.getTree();
     }
 
-    public static List<String> getLibs() throws IOException {
+    public static List<String> getLibs(int numberOfMainArgs) throws IOException {
         List<String> res = new ArrayList<>();
+
+        res.add("const " + NUMBER_OF_MAIN_ARGS + " = " + numberOfMainArgs);
 
         File[] files = (new File(LIBS_PATH)).listFiles();
 

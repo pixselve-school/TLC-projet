@@ -39,7 +39,7 @@ public class Main {
     Translator translator = new Translator();
     List<String> javascript = translator.translate(optimized);
 
-    javascript.addAll(Utils.getLibs());
+    javascript.addAll(Utils.getLibs(checker.getNumberMainParam()));
 
     Files.writeString(Path.of(pathWrite), javascript.stream().reduce("", (String a, String b) -> a + '\n' + b));
   }

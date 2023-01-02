@@ -19,6 +19,7 @@ public class Checker {
     String[] fileText;
 
     boolean foundMain = false;
+    int numberMainParam;
 
     final static String MAIN_FUNCTION = "main";
 
@@ -149,6 +150,11 @@ public class Checker {
             }
         }
     }
+
+    public int getNumberMainParam() {
+        return numberMainParam;
+    }
+
     private void parseOutputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws UnhandledException {
         for(Object child : tree.getChildren()){
             CommonTree childTree = (CommonTree) child;
@@ -168,8 +174,10 @@ public class Checker {
         CommonTree commands = (CommonTree) tree.getChild(2);
         CommonTree outputs = (CommonTree) tree.getChild(3);
 
-        if(name.getText().equals(MAIN_FUNCTION))
+        if(name.getText().equals(MAIN_FUNCTION)) {
             foundMain = true;
+            numberMainParam = inputs.getChildCount();
+        }
 
         try {
             stack.newSet(name.getText(), new FunctionType(name.getText(), tree.getLine(), inputs.getChildCount()));
