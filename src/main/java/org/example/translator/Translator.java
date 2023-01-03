@@ -79,7 +79,7 @@ public class Translator {
     private void While(List<String> line) throws OptimizeException {
         String label = line.get(0);
         line = getNext();
-        addLine("while(!"+line.get(1)+"){");
+        addLine("while(!toBool("+line.get(1)+")){");
         tabs++;
 
         line = getNext();
@@ -98,7 +98,7 @@ public class Translator {
     }
 
     private void If(List<String> line) throws OptimizeException {
-        addLine("if("+line.get(1)+"){");
+        addLine("if(toBool("+line.get(1)+")){");
 
         tabs++;
 
