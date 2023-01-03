@@ -1,12 +1,18 @@
-// let args = process.argv.slice(2)
-//
-// let n = args.length
-//
-// if (n !== NUMBER_OF_MAIN_ARGS) {
-//     console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
-// } else {
-//     tlc_main(process.argv)
-// }
+/**
+ * Launch the program if the number of parameters in
+ * the console matches the number of arguments in the main function
+ */
+(()=>{
+    let args = process.argv.slice(2)
+
+    let n = args.length
+
+    if (n !== NUMBER_OF_MAIN_ARGS) {
+        console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
+    } else {
+        tlc_main(process.argv)
+    }
+})()
 
 /**
  * Checks if the given value is true

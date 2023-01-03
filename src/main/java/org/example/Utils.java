@@ -31,7 +31,7 @@ public class Utils {
     public static List<String> getLibs(int numberOfMainArgs) throws IOException {
         List<String> res = new ArrayList<>();
 
-        res.add("const " + NUMBER_OF_MAIN_ARGS + " = " + numberOfMainArgs);
+        res.add("const " + NUMBER_OF_MAIN_ARGS + " = " + numberOfMainArgs + ";");
 
         File[] files = (new File(LIBS_PATH)).listFiles();
 
