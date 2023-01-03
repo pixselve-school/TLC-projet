@@ -58,6 +58,7 @@ public class Translator {
 
     private void get(List<String> line) {
         addLine(line.get(1) + " = " + PARAMS_STACK_FUNC + ".shift()");
+        variables.add(line.get(1));
     }
 
     private void call(List<String> line) throws NumberOfArgumentException {
@@ -194,7 +195,19 @@ public class Translator {
             tabs++;
             addLine("let " + RETURN_STACK + " = []");
             addLine("let " + PARAMS_STACK + " = []");
-        }else if(line.get(1).equals("end")){
+
+            int lineDefine = getIndex();
+
+            line = getNext();
+            while(line.size() != 2 || !line.get(0).equals("func") || !line.get(1).equals("end")){
+                translateLine(line);
+                line = getNext();
+            }
+
+            for(String var : variables){
+                addLine("let " + var + " = null", lineDefine);
+            }
+
             tabs--;
             addLine("}");
         }else{
@@ -208,6 +221,12 @@ public class Translator {
 
     private void addLine(String line){
         res.add("\t".repeat(tabs) + line);
+    }
+    private void addLine(String line, int n){
+        res.add(n, "\t".repeat(tabs) + line);
+    }
+    private int getIndex(){
+        return res.size();
     }
 
     private List<String> getNext(){
