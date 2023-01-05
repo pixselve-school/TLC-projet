@@ -4,11 +4,13 @@ public class FunctionType extends Type{
     String name;
     int line;
     int args;
+    int rets;
 
-    public FunctionType(String name, int line, int args) {
+    public FunctionType(String name, int line, int args, int rets) {
         this.name = name;
         this.line = line;
         this.args = args;
+        this.rets = rets;
     }
 
     public String getName() {
@@ -21,5 +23,9 @@ public class FunctionType extends Type{
 
     public int getArgs() {
         return args;
+    }
+
+    public int getReturns() {
+        return rets;
     }
 }

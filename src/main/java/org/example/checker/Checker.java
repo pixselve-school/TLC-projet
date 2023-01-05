@@ -58,6 +58,7 @@ public class Checker {
             case WhileLexer.VARS -> parseVars(stack, tree);
             case WhileLexer.Variable -> parseGetVars(stack, tree);
             case WhileLexer.SYMB -> parseGetFunc(stack, tree);
+            case WhileLexer.LET -> parseLet(stack, tree);
             case WhileLexer.COMMANDS -> {
                 stack.down();
                 for (Object child : tree.getChildren()) {
@@ -74,6 +75,29 @@ public class Checker {
             }
         }
     }
+
+    private void parseLet(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+        CommonTree left = (CommonTree) tree.getChild(0);
+        CommonTree right = (CommonTree) tree.getChild(1);
+
+        if(right.getChild(0).getType() == WhileLexer.SYMB){
+            String name = right.getChild(0).getChild(0).getText();
+            try {
+                if(stack.exists(name) && stack.get(name) instanceof FunctionType f){
+                    if(f.getReturns() != left.getChildCount())
+                        throw new BadAmountReturn(filename, tree, f, left.getChildCount());
+                }
+
+            } catch (StackException e) {
+                throw new NotDeclaredException(filename, tree, name, FunctionType.class);
+            }
+        }
+
+        parseInputs(stack, left);
+        parseInputs(stack, right);
+
+    }
+
     private void parseGetFunc(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         String name = tree.getChild(0).getText();
 
@@ -181,7 +205,7 @@ public class Checker {
         }
 
         try {
-            stack.newSet(name.getText(), new FunctionType(name.getText(), tree.getLine(), inputs.getChildCount()));
+            stack.newSet(name.getText(), new FunctionType(name.getText(), tree.getLine(), inputs.getChildCount(), outputs.getChildCount()));
         } catch (AlreadyExistException e) {
             int line;
             try {
