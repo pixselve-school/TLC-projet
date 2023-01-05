@@ -15,7 +15,7 @@ import org.antlr.runtime.tree.Tree
  */
 object While {
 
-    fun toCode(result: MutableList<String>, tree: Tree, index: String) {
+    fun toCode(result: MutableList<String>, tree: Tree, index: Int) {
         val expression = tree.getChild(0)
         val commands = tree.getChild(1)
         // generate code for expression
@@ -25,12 +25,13 @@ object While {
         val codeInsideCommands = Compiler.compile(commands)
         // generate code for while
         result.addAll(expressionResult.prepend)
-        result.add("param ${expressionResult.value}")
-        result.add("WHILE_BOOL_$index = call convertToBoolean 1")
-        result.add("WHILE_$index:")
+        result.add("WHILE_BEFORE_COND_$index:")
+        // if expression is false, jump to the end of while
+        result.add("JZ WHILE_AFTER_WHILE_$index")
+        // if expression is true, execute commands
         result.addAll(codeInsideCommands)
-        result.add("param ${expressionResult.value}")
-        result.add("WHILE_BOOL_$index = call convertToBoolean 1")
-        result.add("if WHILE_BOOL_$index goto WHILE_$index")
+        // jump to the beginning of while
+        result.add("JMP WHILE_BEFORE_COND_$index")
+        result.add("WHILE_AFTER_WHILE_$index:")
     }
 }
