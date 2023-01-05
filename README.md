@@ -13,8 +13,12 @@ Located on the Main class :
 String pathRead = "src/main/resources/and.txt";
 String pathWrite = "out/and.js";
 ```
+Or launch the program with arguments :
+```txt
+./program input_file output_file
+```
 
 # Launch output
-```shell
-node /out/and.js <parameters>
+```txt
+node /out/and.js <parameters of main function>
 ```
