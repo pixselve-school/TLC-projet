@@ -166,7 +166,7 @@ class Expression(private val tree: Tree) : Element {
             }
 
             WhileParser.Symbol -> {
-                Compose(emptyList(), tree.text)
+                Compose(emptyList(), "\"${tree.text}\"")
             }
 
             else -> {

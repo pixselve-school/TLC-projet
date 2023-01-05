@@ -161,12 +161,12 @@ internal class LetTest {
         toCode(result, tree)
         Assertions.assertArrayEquals(
             arrayOf(
-                "R_0[0] = ceci",
-                "R_0[1] = est",
+                "R_0[0] = \"ceci\"",
+                "R_0[1] = \"est\"",
                 "R_1[0] = R_0",
-                "R_1[1] = une",
+                "R_1[1] = \"une\"",
                 "R_2[0] = R_1",
-                "R_2[1] = liste",
+                "R_2[1] = \"liste\"",
                 "R_3[0] = R_2",
                 "R_3[1] = nil",
                 "A = R_3"
