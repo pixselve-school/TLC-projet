@@ -54,9 +54,11 @@ class Expression(private val tree: Tree) : Element {
                     0 -> {
                         Compose(emptyList(), "nil")
                     }
+
                     1 -> {
                         Compose(emptyList(), tree.getChild(0).text)
                     }
+
                     2 -> {
                         val first = Expression(tree.getChild(0)).toCode()
                         val second = Expression(tree.getChild(1)).toCode()
@@ -69,6 +71,7 @@ class Expression(private val tree: Tree) : Element {
                         counter++
                         result
                     }
+
                     else -> {
                         val prepend = LinkedList<String>()
                         for (childCount in tree.childCount - 1 downTo 0) {
@@ -94,14 +97,15 @@ class Expression(private val tree: Tree) : Element {
             WhileParser.TL -> {
                 if (tree.getChild(0).type == WhileParser.NIL) {
                     Compose(emptyList(), "nil")
-                    //                } else if (tree.getChild(0).getType() == WhileParser.Variable) {
-//                    return new Compose(Collections.emptyList(), tree.getChild(0).getText());
                 } else {
-                    println(tree.getChild(0).type)
                     val compose = Expression(tree.getChild(0)).toCode()
                     val prepend = LinkedList(compose.prepend)
-                    prepend.add("R_$counter = ${compose.value}[0]")
-                    val result = Compose(prepend, "R_$counter")
+
+                    prepend.add("param ${compose.value}")
+                    prepend.add("R_$counter = call tl 1")
+                    prepend.add("R_${counter + 1} = R_$counter[0]")
+                    val result = Compose(prepend, "R_${counter + 1}")
+                    counter++
                     counter++
                     result
                 }
@@ -110,13 +114,15 @@ class Expression(private val tree: Tree) : Element {
             WhileParser.HD -> {
                 if (tree.getChild(0).type == WhileParser.NIL) {
                     Compose(emptyList(), "nil")
-                    //                } else if (tree.getChild(0).getType() == WhileParser.Variable) {
-//                    return new Compose(Collections.emptyList(), tree.getChild(0).getText());
                 } else {
                     val compose = Expression(tree.getChild(0)).toCode()
                     val prepend = LinkedList(compose.prepend)
-                    prepend.add("R_$counter = ${compose.value}[1]")
-                    val result = Compose(prepend, "R_$counter")
+
+                    prepend.add("param ${compose.value}")
+                    prepend.add("R_$counter = call hd 1")
+                    prepend.add("R_${counter + 1} = R_$counter[0]")
+                    val result = Compose(prepend, "R_${counter + 1}")
+                    counter++
                     counter++
                     result
                 }
@@ -127,6 +133,7 @@ class Expression(private val tree: Tree) : Element {
                     0 -> {
                         Compose(emptyList(), "nil")
                     }
+
                     1 -> {
                         val expr = Expression(tree.getChild(0)).toCode()
                         val prepend = LinkedList(expr.prepend)
@@ -136,6 +143,7 @@ class Expression(private val tree: Tree) : Element {
                         counter++
                         result
                     }
+
                     else -> {
                         val prepend = LinkedList<String>()
                         for (childCount in tree.childCount - 1 downTo 0) {
@@ -156,9 +164,11 @@ class Expression(private val tree: Tree) : Element {
                     }
                 }
             }
+
             WhileParser.Symbol -> {
                 Compose(emptyList(), tree.text)
             }
+
             else -> {
                 throw RuntimeException("NOT IMPLEMENTED: ${tree.type}")
             }

@@ -1,20 +1,4 @@
 /**
- * Launch the program if the number of parameters in
- * the console matches the number of arguments in the main function
- */
-(()=>{
-    let args = process.argv.slice(2)
-
-    let n = args.length
-
-    if (n !== NUMBER_OF_MAIN_ARGS) {
-        console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
-    } else {
-        tlc_main(process.argv)
-    }
-})()
-
-/**
  * Checks if the given value is true
  * @param a the array to check
  *
@@ -49,3 +33,48 @@ function toInt(a) {
     return toInt(a[1]) + 1;
 }
 
+/**
+ * si T = (cons A B) alors retourne B
+ * si T = Symb alors retourne nil
+ * si T = nil alors retourne nil
+ */
+function tl(a) {
+    if (a === null || a === undefined) {
+        return null;
+    }
+    if (!Array.isArray(a)) {
+        return null;
+    }
+    return a[1];
+}
+
+/**
+ * si T = (cons A B) alors retourne A
+ * si T = Symb alors retourne nil
+ * si T = nil alors retourne nil
+ */
+function hd(a) {
+    if (a === null || a === undefined) {
+        return null;
+    }
+    if (!Array.isArray(a)) {
+        return null;
+    }
+    return a[0];
+}
+
+/**
+ * Launch the program if the number of parameters in
+ * the console matches the number of arguments in the main function
+ */
+(()=>{
+    let args = process.argv.slice(2)
+
+    let n = args.length
+
+    if (n !== NUMBER_OF_MAIN_ARGS) {
+        console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
+    } else {
+        tlc_main(process.argv)
+    }
+})()

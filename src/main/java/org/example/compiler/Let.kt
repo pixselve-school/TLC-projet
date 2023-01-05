@@ -9,12 +9,6 @@ object Let {
         val expressionsTree = tree.getChild(1)
         val variablesNames = Array<String>(variables.childCount) { variables.getChild(it).text }
         val expressions = Array<Tree>(expressionsTree.childCount)  { expressionsTree.getChild(it) }
-//        for (i in 0 until variables.childCount) {
-//            variablesNames[i] = variables.getChild(i).text
-//        }
-//        for (i in 0 until expressionsTree.childCount) {
-//            expressions[i] = expressionsTree.getChild(i)
-//        }
         for (i in variablesNames.indices) {
             val expression = Expression(expressions[i])
             val compose = expression.toCode()

@@ -266,7 +266,10 @@ internal class LetTest {
             toCode(result, tree)
             Assertions.assertArrayEquals(
                 arrayOf(
-                    "A = VAR1"
+                    "param VAR1",
+                    "R_0 = call hd 1",
+                    "R_1 = R_0[0]",
+                    "A = R_1"
                 ), result.toTypedArray()
             )
         }
@@ -293,9 +296,13 @@ internal class LetTest {
             val tree = getTreeForCode("A := (tl VAR1)")
             val result = mutableListOf<String>()
             toCode(result, tree)
+            println(result)
             Assertions.assertArrayEquals(
                 arrayOf(
-                    "A = VAR1"
+                    "param VAR1",
+                    "R_0 = call tl 1",
+                    "R_1 = R_0[0]",
+                    "A = R_1"
                 ), result.toTypedArray()
             )
         }
