@@ -49,11 +49,43 @@ public class Translator {
             default -> {
                 if(firstWord.startsWith("for_"))
                     While(line);
+                else if(firstWord.startsWith("FOR_"))
+                    For(line);
                 else if(line.size() >= 2 && line.get(1).equals("="))
                     assign(line);
                 else throw new OptimizeException(getLine(), "No operation found");
             }
         }
+    }
+
+    private void For(List<String> line) throws OptimizeException {
+        variables.add(line.get(0));
+        String init = getLine();
+        String variable = line.get(0);
+        getNext();
+        line = getNext();
+        getNext();
+
+        String cond = "toInt(" + line.get(2) + ") " + line.get(3) + " " + line.get(4);
+
+        String modif = line.get(2) + " = " + line.get(2) + "[1]";
+
+        String lineFor = "for(" + init + "; !(" + cond + "); " + modif + "){";
+        addLine(lineFor);
+        tabs++;
+
+        line = getNext();
+
+        while(!line.get(0).equals(variable)){
+            translateLine(line);
+
+            line = getNext();
+        }
+        getNext();
+        getNext();
+
+        tabs--;
+        addLine("}");
     }
 
     private void get(List<String> line) {

@@ -61,8 +61,8 @@ command	:	'nop' -> NOP
 exprBase:	'nil' -> NIL
 	 | Variable -> Variable
 	 | Symbol -> Symbol
-	|	'(' 'cons' lexpr ')' -> ^(CONS lexpr)
-	| '(' 'list' lexpr ')' -> ^(LIST lexpr)
+	|	'(' 'cons' lexpr? ')' -> ^(CONS lexpr?)
+	| '(' 'list' lexpr? ')' -> ^(LIST lexpr?)
 	|	'(' 'hd' exprBase ')'  -> ^(HD exprBase)
 	| '(' 'tl' exprBase ')' -> ^(TL exprBase)
 	|	'(' Symbol lexpr? ')' -> ^(SYMB Symbol lexpr?);
