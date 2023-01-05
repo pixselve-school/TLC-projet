@@ -12,17 +12,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CheckerTest {
 
+    String main = "" +
+            "function main :\n" +
+            "   read\n" +
+            "   %\n" +
+            "       Result := (cons)\n" +
+            "   %\n" +
+            "   write Result\n\n";
+
     boolean check(String s) throws RecognitionException, CheckerException {
-        CharStream cs = new ANTLRStringStream(s);
+        CharStream cs = new ANTLRStringStream(main+s);
         org.example.WhileLexer lexer = new org.example.WhileLexer(cs);
         CommonTokenStream cts = new CommonTokenStream(lexer);
         org.example.WhileParser parser = new org.example.WhileParser(cts);
         org.example.WhileParser.program_return program = parser.program();
 
         CommonTree tree = (CommonTree) program.getTree();
-        Checker checker = new Checker(tree, "test", s);
+        Checker checker = new Checker(tree, "test", main+s);
         return checker.check();
     }
+
 
     @Test
     void checkFunctionExist() throws CheckerException, RecognitionException {
@@ -40,7 +49,7 @@ class CheckerTest {
                 "function false :\n" +
                         "    read\n" +
                         "    %\n" +
-                        "        Result := true\n" +
+                        "        Result := (true)\n" +
                         "    %\n" +
                         "    write Result\n";
         assertFalse(check(f2));

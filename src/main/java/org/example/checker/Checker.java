@@ -93,8 +93,8 @@ public class Checker {
             }
         }
 
-        parseInputs(stack, left);
-        parseInputs(stack, right);
+        symbolTable(stack, left);
+        symbolTable(stack, right);
 
     }
 

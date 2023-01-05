@@ -16,8 +16,18 @@ import java.util.List;
 
 public class Main {
   public static void main(String[] args) throws IOException, RecognitionException, CheckerException, OptimizeException {
+    if(args.length != 0 && args.length != 2) {
+      System.err.println("Usage : " + args[0] + " input_file output_file");
+      System.err.println("If no arguments are passed, then \n\tinput_file = src/main/resources/and.txt\n\toutput_file = out/and.js");
+    }
+
     String pathRead = "src/main/resources/and.txt";
     String pathWrite = "out/and.js";
+
+    if(args.length == 2){
+      pathRead = args[1];
+      pathWrite = args[2];
+    }
 
     String txt = Files.readString(Path.of(pathRead));
     CharStream cs = new ANTLRStringStream(txt);
