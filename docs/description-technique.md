@@ -83,6 +83,26 @@ Le noeud `WHILE` comprend 2 noeuds :
 - Le premier `Opt1` correspond à la condition d'exécution
 - Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
 
+## Description de la génération de code à partir du code 3 adresses
+
+Tout d'abord, nous avons décidé de définir toutes les variables au début de chaque fonction. Cela est nécessaire, car
+dans le langage while, il n'est pas nécessaire de déclarer les variables avant de les utiliser. Par conséquent, pour
+éviter tout conflit ou erreur de déclaration, nous avons opté pour une déclaration globale des variables à chaque
+fonction.
+
+Ensuite, nous avons utilisé une stack pour les paramètres d'entrée et de sortie des fonctions. Ce choix a été fait pour
+simplifier la gestion des paramètres et faciliter la conversion en code cible.
+
+Pour la conversion elle-même, nous avons opté pour un parcours linéaire du code 3 adresses. Cela signifie que nous
+lisons chaque instruction dans l'ordre où elle est écrite dans le code 3 adresses, et la convertissons en conséquence.
+
+Nous avons également recherché les instructions GOTO qui pourraient correspondre à des structures de contrôle de flux
+telles que les boucles ou les conditions. Cela est nécessaire car ces structures de contrôle de flux ne sont pas
+présentes dans le code 3 adresses, il faut donc les recréer lors de la conversion.
+
+Enfin, nous avons ajouté des préfixes aux fonctions pour éviter les collisions avec les mots clés réservés du langage
+cible. Cela permet de s'assurer que les fonctions générées sont valides et peuvent être utilisées sans erreurs.
+
 ## Description de la génération de code 3 adresses à partir de l’AST
 
 La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est
