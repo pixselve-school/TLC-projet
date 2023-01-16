@@ -54,3 +54,29 @@ Le noeud `LET` comprend 2 noeuds :
 
 - Le premier `VARS` correspond aux variables qui seront affectées
 - Le deuxième `EXPRS` correspond à l'expression dont la valeur sera affectée aux variables définies dans le noeud `VARS`.
+
+### For
+
+```mermaid
+graph TD
+FOR --> Opt1
+FOR --> COMMANDS
+```
+
+Le noeud `FOR` comprend 2 noeuds :
+
+- Le premier `Opt1` correspond à l'expression de boucle
+- Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
+
+### While
+
+```mermaid
+flowchart
+WHILE --> Opt1
+WHILE --> COMMANDS
+```
+
+Le noeud `WHILE` comprend 2 noeuds :
+
+- Le premier `Opt1` correspond à la condition d'exécution
+- Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
