@@ -27,11 +27,11 @@ object While {
         result.addAll(expressionResult.prepend)
         result.add("WHILE_BEFORE_COND_$index:")
         // if expression is false, jump to the end of while
-        result.add("JZ WHILE_AFTER_WHILE_$index")
+        result.add("ifz ${expressionResult.value} goto WHILE_AFTER_WHILE_$index")
         // if expression is true, execute commands
         result.addAll(codeInsideCommands)
         // jump to the beginning of while
-        result.add("JMP WHILE_BEFORE_COND_$index")
+        result.add("goto WHILE_BEFORE_COND_$index")
         result.add("WHILE_AFTER_WHILE_$index:")
     }
 }

@@ -36,7 +36,7 @@ object For {
         // decrement variable
         result.add("FOR_VARIABLE_$index = FOR_VARIABLE_$index[1]")
         // jump to the beginning of for
-        result.add("JMP FOR_BEFORE_COND_$index")
+        result.add("goto FOR_BEFORE_COND_$index")
         result.add("FOR_AFTER_FOR_$index:")
 
 
