@@ -126,3 +126,7 @@ end
 14[OUTPUTS] --> 15
 15[B]
 ```
+
+### Description de l’optimisation de code si elle a été réalisée
+
+L’optimisation de code n’a pas été réalisée.
