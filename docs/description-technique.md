@@ -80,3 +80,49 @@ Le noeud `WHILE` comprend 2 noeuds :
 
 - Le premier `Opt1` correspond à la condition d'exécution
 - Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
+
+## Description de la génération de code 3 adresses à partir de l’AST
+
+La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses sont ajoutées au tableau qui correspond à tout le code 3 adresses résultat. Les fonctionnalités principales dont les AST sont plus haut sont traitées séparément dans des classes différentes, comme les IF, les boucles FOR ou les FONCTIONS.
+
+Pour cela, on utilise une classe `Expression` qui permet de désigner une expression qui peut être utilisée dans une variable ou une boucle. Cette classe permet de décomposer une expression en ses sous-expressions afin de générer le code 3 adresses correspondant.
+
+Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
+
+```mermaid
+flowchart
+PROGRAM
+subgraph 1er exécution
+PROGRAM
+PROGRAM --> FUNCTION
+subgraph 2nd exécution
+FUNCTION
+FUNCTION --> IF
+FUNCTION --> TF[Traitement des Inputs avec Expression]
+subgraph 3ième exécution
+IF --> NOP
+IF --> TF2[Traitement des Inputs avec Expression]
+subgraph 4ième exécution
+NOP
+end
+end
+end
+end
+
+0[PROGRAM] --> 1
+1[FUNCTION] --> 2
+2[test]
+1[FUNCTION] --> 4
+4[INPUTS] --> 5
+5[A]
+1[FUNCTION] --> 7
+7[COMMANDS] --> 8
+8[IF] --> 9
+9[Opt1]
+8[IF] --> 11
+11[COMMANDS] --> 12
+12[NOP]
+1[FUNCTION] --> 14
+14[OUTPUTS] --> 15
+15[B]
+```
