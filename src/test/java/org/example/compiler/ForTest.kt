@@ -32,7 +32,7 @@ class ForTest {
                 "FOR_VARIABLE_COND_0 = FOR_VARIABLE_0 <= 0",
                 "if FOR_VARIABLE_COND_0 goto FOR_AFTER_FOR_0",
                 "FOR_VARIABLE_0 = FOR_VARIABLE_0[1]",
-                "JMP FOR_BEFORE_COND_0",
+                "goto FOR_BEFORE_COND_0",
                 "FOR_AFTER_FOR_0:"
             ),
             result
@@ -53,7 +53,7 @@ class ForTest {
                 "if FOR_VARIABLE_COND_0 goto FOR_AFTER_FOR_0",
                 "A = B",
                 "FOR_VARIABLE_0 = FOR_VARIABLE_0[1]",
-                "JMP FOR_BEFORE_COND_0",
+                "goto FOR_BEFORE_COND_0",
                 "FOR_AFTER_FOR_0:"
             ),
             result

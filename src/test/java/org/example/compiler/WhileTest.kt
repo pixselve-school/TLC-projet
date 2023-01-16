@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test
 class WhileTest {
     @BeforeEach
     fun setUp() {
-        Compiler.reset()
-    }
+    Compiler.reset()
+}
 
-    @Throws(RecognitionException::class)
+@Throws(RecognitionException::class)
     fun getTreeForCode(code: String): Tree {
         val tree = Utils.getTreeFromString("function test: read A % $code % write B")
         return tree.getChild(0).getChild(2).getChild(0)
@@ -27,8 +27,8 @@ class WhileTest {
         assertEquals(
             listOf(
                 "WHILE_BEFORE_COND_0:",
-                "JZ WHILE_AFTER_WHILE_0",
-                "JMP WHILE_BEFORE_COND_0",
+                "ifz A goto WHILE_AFTER_WHILE_0",
+                "goto WHILE_BEFORE_COND_0",
                 "WHILE_AFTER_WHILE_0:"
             ),
             result
@@ -43,9 +43,9 @@ class WhileTest {
         assertEquals(
             listOf(
                 "WHILE_BEFORE_COND_0:",
-                "JZ WHILE_AFTER_WHILE_0",
+                "ifz A goto WHILE_AFTER_WHILE_0",
                 "A = B",
-                "JMP WHILE_BEFORE_COND_0",
+                "goto WHILE_BEFORE_COND_0",
                 "WHILE_AFTER_WHILE_0:"
             ),
             result
@@ -60,8 +60,8 @@ class WhileTest {
         assertEquals(
             listOf(
                 "WHILE_BEFORE_COND_1:",
-                "JZ WHILE_AFTER_WHILE_1",
-                "JMP WHILE_BEFORE_COND_1",
+                "ifz A goto WHILE_AFTER_WHILE_1",
+                "goto WHILE_BEFORE_COND_1",
                 "WHILE_AFTER_WHILE_1:"
             ),
             result
