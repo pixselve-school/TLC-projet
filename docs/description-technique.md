@@ -7,7 +7,8 @@ flowchart
 A[Lecture du fichier par le programme Java] --> B[Parsing du fichier par ANTLR] --> C[Analyse lexiale et syntaxique par ANTLR] --> D[Analyse sémantique] --> E[Génération du code intermédiaire] -- L'optimisation ici n'a pas été implémentée  --> F[Génération du code JavaScript]
 ```
 
-Nous avons fait en sorte que cela soit facile à utiliser pour l'utilisateur. Le script prend en compte deux arguments. Le premier correspond au fichier d'entrée, le second au fichier de sortie.
+Nous avons fait en sorte que cela soit facile à utiliser pour l'utilisateur. Le script prend en compte deux arguments.
+Le premier correspond au fichier d'entrée, le second au fichier de sortie.
 
 ## Description de l’AST
 
@@ -53,7 +54,8 @@ LET --> EXPRS --> SYMB --> false
 Le noeud `LET` comprend 2 noeuds :
 
 - Le premier `VARS` correspond aux variables qui seront affectées
-- Le deuxième `EXPRS` correspond à l'expression dont la valeur sera affectée aux variables définies dans le noeud `VARS`.
+- Le deuxième `EXPRS` correspond à l'expression dont la valeur sera affectée aux variables définies dans le
+  noeud `VARS`.
 
 ### For
 
@@ -83,9 +85,14 @@ Le noeud `WHILE` comprend 2 noeuds :
 
 ## Description de la génération de code 3 adresses à partir de l’AST
 
-La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses sont ajoutées au tableau qui correspond à tout le code 3 adresses résultat. Les fonctionnalités principales dont les AST sont plus haut sont traitées séparément dans des classes différentes, comme les IF, les boucles FOR ou les FONCTIONS.
+La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est
+basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses
+sont ajoutées au tableau qui correspond à tout le code 3 adresses résultat. Les fonctionnalités principales dont les AST
+sont plus haut sont traitées séparément dans des classes différentes, comme les IF, les boucles FOR ou les FONCTIONS.
 
-Pour cela, on utilise une classe `Expression` qui permet de désigner une expression qui peut être utilisée dans une variable ou une boucle. Cette classe permet de décomposer une expression en ses sous-expressions afin de générer le code 3 adresses correspondant.
+Pour cela, on utilise une classe `Expression` qui permet de désigner une expression qui peut être utilisée dans une
+variable ou une boucle. Cette classe permet de décomposer une expression en ses sous-expressions afin de générer le code
+3 adresses correspondant.
 
 Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
 
@@ -130,3 +137,11 @@ end
 ### Description de l’optimisation de code si elle a été réalisée
 
 L’optimisation de code n’a pas été réalisée.
+
+### Description de la bibliothèque runtime de WHILE écrite dans le langage cible
+
+La runtime Javascript de notre compilateur WHILE est très légère. Elle permet de convertir un tableau en entier, booléen
+et chaîne de caractères avec `toInt()` et `toBool()`. Elle permet également de print des tableaux en fonction de leur
+type et de naviguer dans un tableau avec `tl()` et `hd()`. On utilise aussi un bout de code javascript qui permet de
+récupérer les arguments avec lequel le programme est exécuté. Ces arguments sont ensuite envoyés à la fonction `main` du
+programme WHILE.
