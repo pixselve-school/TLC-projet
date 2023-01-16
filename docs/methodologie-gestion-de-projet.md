@@ -25,3 +25,16 @@ Une fois la grammaire ANTLR réalisée à deux, nous avons mis en place un proje
 mieux coordonner notre travail, nous avons ensuite découpé les tâches entre les deux membres de l'équipe. Fabien s'est
 chargé de l'analyse sémantique et de traduire le code intermédiaire en Javascript, tandis que Mael s'est occupé de
 générer le code intermédiaire et de rédiger la runtime Javascript.
+
+## Rapport individuel
+
+| Tâche | Membre de l'équipe |
+| --- | --- |
+| Lecture du fichier par le programme Java | Fabien & Mael |
+| Parsing du fichier par ANTLR | Fabien & Mael |
+| Analyse lexiale et syntaxique par ANTLR | Fabien & Mael |
+| Analyse sémantique | Fabien |
+| Génération du code intermédiaire | Mael |
+| Optimisation | Non implémentée |
+| Génération du code JavaScript | Mael |
+| Écriture de la runtime Javascript | Mael |
