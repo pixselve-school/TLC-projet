@@ -3,7 +3,7 @@
  * the console matches the number of arguments in the main function
  */
 (()=>{
-    let args = process.argv.slice(2)
+    let args = process.argv.slice(2).map(n => from(n))
 
     let n = args.length
 
