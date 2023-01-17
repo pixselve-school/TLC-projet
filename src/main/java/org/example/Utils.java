@@ -31,14 +31,33 @@ public class Utils {
     public static List<String> getLibs(int numberOfMainArgs) throws IOException {
         List<String> res = new ArrayList<>();
 
+        res.add("""
+                /**
+                 * ===============================================
+                 * |                While STD lib                |
+                 * ===============================================
+                 */""");
+
         res.add("const " + NUMBER_OF_MAIN_ARGS + " = " + numberOfMainArgs + ";");
 
         File[] files = (new File(LIBS_PATH)).listFiles();
 
         for(File f : files){
+            res.add("\n/**\n" +
+                    " * ---------------- While STD Lib ----------------\n" +
+                    " * " + f.getName() + "\n" +
+                    " */\n");
+
             String all = Files.readString(f.toPath());
             res.addAll(List.of(all.split("\n")));
         }
+
+        res.add("""
+                /**
+                 *  ===============================================
+                 *  |                 End STD lib                 |
+                 *  ===============================================
+                 */""");
 
         return res;
     }
