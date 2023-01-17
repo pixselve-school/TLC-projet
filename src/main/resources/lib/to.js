@@ -14,7 +14,7 @@ function toBool(a) {
     if (a === undefined) {
         return false;
     }
-    return a.length === 2;
+    return Array.isArray(a) && a.length === 2;
 
 }
 
@@ -27,6 +27,8 @@ function toInt(a) {
     if (a === null || a === undefined) {
         return 0;
     }
+    if(!Array.isArray(a))
+        return 0;
     if (a.length === 1) {
         return 0;
     }
