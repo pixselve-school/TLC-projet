@@ -48,7 +48,7 @@ public class Translator {
             case "goto" -> {}
             case "get" -> get(line);
             default -> {
-                if(firstWord.startsWith("for_"))
+                if(firstWord.startsWith("WHILE_"))
                     While(line);
                 else if(firstWord.startsWith("FOR_"))
                     For(line);
@@ -113,7 +113,7 @@ public class Translator {
     private void While(List<String> line) throws OptimizeException {
         String label = line.get(0);
         line = getNext();
-        addLine("while(!toBool("+line.get(1)+")){");
+        addLine("while(toBool("+line.get(1)+")){");
         tabs++;
 
         line = getNext();
