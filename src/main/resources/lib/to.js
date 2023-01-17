@@ -52,14 +52,15 @@ function toString(t){
  * si T = Symb alors retourne nil
  * si T = nil alors retourne nil
  */
-function tl(a) {
+function tlc_tl(args) {
+    let a = args.shift()
     if (a === null || a === undefined) {
-        return null;
+        return [null];
     }
     if (!Array.isArray(a)) {
-        return null;
+        return [null];
     }
-    return a[1];
+    return [a[1]];
 }
 
 /**
@@ -67,12 +68,13 @@ function tl(a) {
  * si T = Symb alors retourne nil
  * si T = nil alors retourne nil
  */
-function hd(a) {
+function tlc_hd(args) {
+    let a = args.shift()
     if (a === null || a === undefined) {
-        return null;
+        return [null];
     }
     if (!Array.isArray(a)) {
-        return null;
+        return [null];
     }
-    return a[0];
+    return [a[0]];
 }

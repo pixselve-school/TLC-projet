@@ -11,6 +11,9 @@
         console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
     } else {
         let res = tlc_main(args)
-        print(res)
+
+        for(let r of res) {
+            print(r)
+        }
     }
 })()
