@@ -15,12 +15,12 @@ function from(any){
 }
 function fromBool(b){
     if(b)
-        return [null, []]
-    return []
+        return [null, null]
+    return null
 }
 function fromInt(n){
     if(n === 0)
-        return []
+        return null
     return [
         null,
         fromInt(n-1)
@@ -28,7 +28,7 @@ function fromInt(n){
 }
 function fromString(str){
     if(str.length === 0)
-        return []
+        return null
     return [
         str[0],
         fromString(str.substring(1))
