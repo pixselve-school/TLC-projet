@@ -41,7 +41,8 @@ public class Translator {
             case "func" -> func(line);
             case "return" -> ret(line);
             case "Return" -> Ret(line);
-            case "if" -> If(line);
+            case "if" -> If(line, false);
+            case "ifz" -> If(line, true);
             case "param" -> param(line);
             case "call" -> call(line);
             case "goto" -> {}
@@ -130,8 +131,11 @@ public class Translator {
         addLine("}");
     }
 
-    private void If(List<String> line) throws OptimizeException {
-        addLine("if(toBool("+line.get(1)+")){");
+    private void If(List<String> line, boolean zero) throws OptimizeException {
+        if(zero)
+            addLine("if(!toBool("+line.get(1)+")){");
+        else
+            addLine("if(toBool("+line.get(1)+")){");
 
         tabs++;
 
