@@ -11,14 +11,15 @@ gradle generateGrammarSource
 Located on the Main class :
 ```java
 String pathRead = "src/main/resources/and.txt";
-String pathWrite = "out/and.js";
+String pathWrite3addr = "out/and.3addr";
+String pathWriteJS = "out/and.js";
 ```
-Or launch the program with arguments :
+Or launch the main function on your IDEA with arguments :
 ```txt
-./program input_file output_file
+input_file output_3addr output_js
 ```
 
-# Launch output
+# Launch output js file
 ```txt
 node /out/and.js <parameters of main function>
 ```
