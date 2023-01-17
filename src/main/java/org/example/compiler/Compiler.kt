@@ -36,15 +36,13 @@ object Compiler {
     fun compile(tree: Tree, current: MutableList<String>) {
         val nodeType = tree.type
         when (nodeType) {
-            WhileLexer.PROGRAM -> {
+            WhileLexer.PROGRAM, WhileLexer.COMMANDS -> {
                 val children = getChildren(tree)
                 for (child in children) {
                     compile(child, current)
                 }
             }
-
             WhileLexer.FUNCTION -> Function.toCode(current, tree)
-            WhileLexer.COMMANDS -> compile(tree.getChild(0), current)
             WhileLexer.IF -> If.toCode(current, tree, ifCount++)
             WhileLexer.LET -> Let.toCode(current, tree)
             WhileLexer.FOR -> For.toCode(current, tree, forCount++)
