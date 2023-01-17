@@ -78,8 +78,8 @@ function getFabien :
     write Result
 
 function main :
-    read
+    read N1, N2
     %
-        A := nil
+        A := (add N1 N2)
     %
     write A

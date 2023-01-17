@@ -10,6 +10,7 @@
     if (n !== NUMBER_OF_MAIN_ARGS) {
         console.error("Expected " + NUMBER_OF_MAIN_ARGS + " arguments, found " + n)
     } else {
-        tlc_main(process.argv)
+        let res = tlc_main(args)
+        print(res)
     }
 })()

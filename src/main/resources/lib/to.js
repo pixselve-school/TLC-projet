@@ -35,6 +35,18 @@ function toInt(a) {
     return toInt(a[1]) + 1;
 }
 
+function toString(t){
+    if(t === null || t === undefined)
+        return ''
+    if(!Array.isArray(t))
+        return ''
+    if(t.length !== 2)
+        return ''
+    if(typeof(t[0]) === "string")
+        return t[0] + toString(t)
+
+}
+
 /**
  * si T = (cons A B) alors retourne B
  * si T = Symb alors retourne nil
