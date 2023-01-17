@@ -2,7 +2,7 @@
 function true :
     read
     %
-        Result := (cons nil nil) ;
+        Result := (cons nil nil)
     %
     write Result
 
@@ -10,7 +10,7 @@ function true :
 function false :
     read
     %
-        Result := nil ;
+        Result := nil
     %
     write Result
 
@@ -44,7 +44,7 @@ function add :
     %
         Result := Op1 ;
         for Op2 do
-            Result := ( cons nil Result ) ;
+            Result := ( cons nil Result )
         od
     %
     write Result
@@ -79,8 +79,10 @@ function getFabien :
     write Result
 
 function main :
-    read N1, N2
+    read N1, N2, N3
     %
-        A := (sub N1 N2)
+        B := (add N1 N2) ;
+        A := (mul B N3) ;
+        Result := (cons int A)
     %
-    write A
+    write Result
