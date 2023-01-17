@@ -43,7 +43,7 @@ function toString(t){
     if(t.length !== 2)
         return ''
     if(typeof(t[0]) === "string")
-        return t[0] + toString(t)
+        return t[0] + toString(t[1])
 
 }
 
