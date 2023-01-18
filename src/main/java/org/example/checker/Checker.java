@@ -13,6 +13,10 @@ import org.example.spaghetti.exception.StackException;
 
 import java.util.List;
 
+/**
+ * Check the semantic of the program
+ * Print an error if so
+ */
 public class Checker {
     CommonTree tree;
     String filename;
@@ -23,16 +27,28 @@ public class Checker {
 
     final static String MAIN_FUNCTION = "main";
 
+    /**
+     * Create a new checker
+     * @param tree parsed by antlr
+     * @param filename original filename
+     * @param fileText the content of the file
+     */
     public Checker(CommonTree tree, String filename, String fileText) {
         this.tree = tree;
         this.filename = filename;
         this.fileText = fileText.split("\n");
     }
 
+    /**
+     * Check the validity of the program
+     * Errors are printed on standard logs
+     * @return true if no error were found
+     * @throws CheckerException if the error is outside the file
+     */
     public boolean check() throws CheckerException {
         try{
             SpaghettiWrapper<Type> stack = new SpaghettiWrapper<>();
-            symbolTable(stack, tree);
+            check(stack, tree);
 
             if(!foundMain)
                 throw new MainNotFoundException(filename, tree);
@@ -48,21 +64,28 @@ public class Checker {
             return false;
         }
     }
-    private void symbolTable(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+
+    /**
+     * Parse and check the remaining tree
+     * @param stack variables
+     * @param tree
+     * @throws CheckerException
+     */
+    private void check(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         if(tree == null)
             return;
         switch (tree.getType()) {
-            case WhileLexer.FUNCTION -> parseFunction(stack, tree);
-            case WhileLexer.INPUTS -> parseInputs(stack, tree);
-            case WhileLexer.OUTPUTS -> parseOutputs(stack, tree);
-            case WhileLexer.VARS -> parseVars(stack, tree);
-            case WhileLexer.Variable -> parseGetVars(stack, tree);
-            case WhileLexer.SYMB -> parseGetFunc(stack, tree);
-            case WhileLexer.LET -> parseLet(stack, tree);
+            case WhileLexer.FUNCTION -> functionDeclaration(stack, tree);
+            case WhileLexer.INPUTS -> inputs(stack, tree);
+            case WhileLexer.OUTPUTS -> outputs(stack, tree);
+            case WhileLexer.VARS -> varList(stack, tree);
+            case WhileLexer.Variable -> getVar(stack, tree);
+            case WhileLexer.SYMB -> functionCall(stack, tree);
+            case WhileLexer.LET -> assignation(stack, tree);
             case WhileLexer.COMMANDS -> {
                 stack.down();
                 for (Object child : tree.getChildren()) {
-                    symbolTable(stack, (CommonTree) child);
+                    check(stack, (CommonTree) child);
                 }
                 stack.up();
             }
@@ -70,13 +93,19 @@ public class Checker {
                 if(tree.getChildren() == null)
                     return;
                 for (Object child : tree.getChildren()) {
-                    symbolTable(stack, (CommonTree) child);
+                    check(stack, (CommonTree) child);
                 }
             }
         }
     }
 
-    private void parseLet(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+    /**
+     * parse assignation
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+    private void assignation(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         CommonTree left = (CommonTree) tree.getChild(0);
         CommonTree right = (CommonTree) tree.getChild(1);
 
@@ -93,12 +122,19 @@ public class Checker {
             }
         }
 
-        symbolTable(stack, left);
-        symbolTable(stack, right);
+        check(stack, left);
+        check(stack, right);
 
     }
 
-    private void parseGetFunc(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+    /**
+     * Parse function call
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+
+    private void functionCall(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         String name = tree.getChild(0).getText();
 
         int nargs = tree.getChildCount()-1;
@@ -111,7 +147,7 @@ public class Checker {
                 throw new BadAmountArgument(filename, tree, f, nargs);
             }
             for(int i=1; i<tree.getChildCount(); i++){
-                parseInputs(stack, (CommonTree) tree.getChild(i));
+                inputs(stack, (CommonTree) tree.getChild(i));
             }
         }catch (NotFoundException e) {
             throw new NotDeclaredException(filename, tree, name, FunctionType.class);
@@ -119,7 +155,14 @@ public class Checker {
             throw new UnhandledException(filename, tree);
         }
     }
-    private void parseGetVars(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+
+    /**
+     * Parse variable getter
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+    private void getVar(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         if(tree.getType() != WhileLexer.Variable)
             return;
 
@@ -135,7 +178,14 @@ public class Checker {
         }
     }
 
-    private void parseVars(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+    /**
+     * Parse list of variable assignations
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+
+    private void varList(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         for (Object child : tree.getChildren()) {
             String name = ((CommonTree)child).getText();
 
@@ -153,7 +203,14 @@ public class Checker {
         }
     }
 
-    private void parseInputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+    /**
+     * Parse input of function
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+
+    private void inputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         if(tree.getChildren() == null)
             return;
         for (Object child : tree.getChildren()) {
@@ -176,11 +233,20 @@ public class Checker {
         }
     }
 
+    /**
+     * @return the number of required arguments in the defined main function
+     */
     public int getNumberMainParam() {
         return numberMainParam;
     }
 
-    private void parseOutputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws UnhandledException {
+    /**
+     * Parse output of function
+     * @param stack
+     * @param tree
+     * @throws UnhandledException
+     */
+    private void outputs(SpaghettiWrapper<Type> stack, CommonTree tree) throws UnhandledException {
         for(Object child : tree.getChildren()){
             CommonTree childTree = (CommonTree) child;
             String name = childTree.getText();
@@ -193,7 +259,13 @@ public class Checker {
         }
     }
 
-    private void parseFunction(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
+    /**
+     * Parse function declaration
+     * @param stack
+     * @param tree
+     * @throws CheckerException
+     */
+    private void functionDeclaration(SpaghettiWrapper<Type> stack, CommonTree tree) throws CheckerException {
         CommonTree name = (CommonTree) tree.getChild(0);
         CommonTree inputs = (CommonTree) tree.getChild(1);
         CommonTree commands = (CommonTree) tree.getChild(2);
@@ -218,11 +290,11 @@ public class Checker {
             throw new UnhandledException(filename, tree);
         }
         stack.down();
-        symbolTable(stack, inputs);
-        symbolTable(stack, commands);
+        check(stack, inputs);
+        check(stack, commands);
 
         SpaghettiWrapper<Type> outputsStack = new SpaghettiWrapper<>();
-        symbolTable(outputsStack, outputs);
+        check(outputsStack, outputs);
 
         // Verify outputs;
         List<String> children = stack.listInChildren();

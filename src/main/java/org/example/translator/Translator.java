@@ -6,6 +6,10 @@ import org.example.optimizer.OptimizeException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+/**
+ * Used to translate 3addr to JS
+ */
 public class Translator {
 
     List<String> res = new ArrayList<>();
@@ -22,120 +26,143 @@ public class Translator {
     final static String PREFIX = "tlc_";
 
 
+    /**
+     * Transform to JS
+     * @param strs lines of 3addr
+     * @return lines of JS
+     * @throws OptimizeException
+     */
     public List<String> translate(List<String> strs) throws OptimizeException {
         words = strs.stream().map(line -> Arrays.stream(line.split(" ")).collect(Collectors.toList())).toList();
         n = 0;
 
         List<String> line;
-        while((line = getNext()) != null) {
+        while((line = getNextInputLine()) != null) {
             translateLine(line);
         }
 
         return res;
     }
 
+    /**
+     * Translate a line
+     * @param line list of words
+     * @throws OptimizeException
+     */
     private void translateLine(List<String> line) throws OptimizeException {
         String firstWord = line.get(0);
 
         switch (firstWord){
-            case "func" -> func(line);
-            case "return" -> ret(line);
-            case "Return" -> Ret(line);
-            case "if" -> If(line, false);
-            case "ifz" -> If(line, true);
-            case "param" -> param(line);
-            case "call" -> call(line);
+            case "func" -> translateFunction(line);
+            case "return" -> addReturnValue(line);
+            case "Return" -> translateReturn(line);
+            case "if" -> parseIf(line, false);
+            case "ifz" -> parseIf(line, true);
+            case "param" -> addParam(line);
+            case "call" -> translateCallFunction(line);
             case "goto" -> {}
-            case "get" -> get(line);
+            case "get" -> getParam(line);
             default -> {
                 if(firstWord.startsWith("WHILE_"))
-                    While(line);
+                    parseWhile(line);
                 else if(firstWord.startsWith("FOR_"))
-                    For(line);
+                    translateFor(line);
                 else if(line.size() >= 2 && line.get(1).equals("="))
-                    assign(line);
-                else throw new OptimizeException(getLine(), "No operation found");
+                    TranslateAssignation(line);
+                else throw new OptimizeException(getCurrentLine(), "No operation found");
             }
         }
     }
 
-    private void For(List<String> line) throws OptimizeException {
+    /**
+     * Transform a for
+     * @param line
+     * @throws OptimizeException
+     */
+    private void translateFor(List<String> line) throws OptimizeException {
         variables.add(line.get(0));
-        String init = getLine();
+        String init = getCurrentLine();
         String variable = line.get(0);
-        getNext();
-        line = getNext();
-        getNext();
+        getNextInputLine();
+        line = getNextInputLine();
+        getNextInputLine();
 
         String cond = "toInt(" + line.get(2) + ") " + line.get(3) + " " + line.get(4);
 
         String modif = line.get(2) + " = " + line.get(2) + "[1]";
 
         String lineFor = "for(" + init + "; !(" + cond + "); " + modif + "){";
-        addLine(lineFor);
+        addLineToOutput(lineFor);
         tabs++;
 
-        line = getNext();
+        line = getNextInputLine();
 
         while(!line.get(0).equals(variable)){
             translateLine(line);
 
-            line = getNext();
+            line = getNextInputLine();
         }
-        getNext();
-        getNext();
+        getNextInputLine();
+        getNextInputLine();
 
         tabs--;
-        addLine("}");
+        addLineToOutput("}");
     }
 
-    private void get(List<String> line) {
-        addLine(line.get(1) + " = " + PARAMS_STACK_FUNC + ".shift()");
+    private void getParam(List<String> line) {
+        addLineToOutput(line.get(1) + " = " + PARAMS_STACK_FUNC + ".shift()");
         variables.add(line.get(1));
     }
 
-    private void call(List<String> line) throws NumberOfArgumentException {
+    private void translateCallFunction(List<String> line) throws NumberOfArgumentException {
         if(line.size() != 3)
-            throw new NumberOfArgumentException(getLine());
-        addLine(PREFIX+line.get(1) + "("+PARAMS_STACK+")");
+            throw new NumberOfArgumentException(getCurrentLine());
+        addLineToOutput(PREFIX+line.get(1) + "("+PARAMS_STACK+")");
         clearParam();
     }
 
+    /**
+     * Reset parameters of functions
+     */
     private void clearParam(){
-        addLine(PARAMS_STACK + " = []");
+        addLineToOutput(PARAMS_STACK + " = []");
     }
 
-    private void param(List<String> line) {
+    /**
+     * Add a paramater for a function call
+     * @param line
+     */
+    private void addParam(List<String> line) {
         String var = line.get(1);
-        addLine(PARAMS_STACK + ".push(" + var + ")");
+        addLineToOutput(PARAMS_STACK + ".push(" + var + ")");
     }
 
-    private void While(List<String> line) throws OptimizeException {
+    private void parseWhile(List<String> line) throws OptimizeException {
         String label = line.get(0);
-        line = getNext();
-        addLine("while(toBool("+line.get(1)+")){");
+        line = getNextInputLine();
+        addLineToOutput("while(toBool("+line.get(1)+")){");
         tabs++;
 
-        line = getNext();
+        line = getNextInputLine();
         while(true){
             if(line.size() == 2 && line.get(0).equals("goto") && (line.get(1) + ":").equals(label)){
-                getNext();
+                getNextInputLine();
                 break;
             }
 
             translateLine(line);
-            line = getNext();
+            line = getNextInputLine();
         }
 
         tabs--;
-        addLine("}");
+        addLineToOutput("}");
     }
 
-    private void If(List<String> line, boolean zero) throws OptimizeException {
+    private void parseIf(List<String> line, boolean zero) throws OptimizeException {
         if(zero)
-            addLine("if(!toBool("+line.get(1)+")){");
+            addLineToOutput("if(!toBool("+line.get(1)+")){");
         else
-            addLine("if(toBool("+line.get(1)+")){");
+            addLineToOutput("if(toBool("+line.get(1)+")){");
 
         tabs++;
 
@@ -143,14 +170,14 @@ public class Translator {
         String endLabel = "";
 
         List<String> lastLine = line;
-        line = getNext();
+        line = getNextInputLine();
 
         while(true){
             if(line.get(0).equals(label1)){
                 if(lastLine.get(0).equals("goto")) {
                     endLabel = lastLine.get(1) + ":";
                     tabs--;
-                    addLine("}else{");
+                    addLineToOutput("}else{");
                     tabs++;
                 }else{
                     break;
@@ -161,16 +188,16 @@ public class Translator {
                 translateLine(line);
             }
             lastLine = line;
-            line = getNext();
+            line = getNextInputLine();
         }
 
         tabs--;
-        addLine("}");
+        addLineToOutput("}");
     }
 
-    private void assign(List<String> line) throws NumberOfArgumentException {
+    private void TranslateAssignation(List<String> line) throws NumberOfArgumentException {
         if(line.size() < 3)
-            throw new NumberOfArgumentException(getLine());
+            throw new NumberOfArgumentException(getCurrentLine());
 
         String leftName = line.get(0);
         String right = line.get(2);
@@ -198,74 +225,80 @@ public class Translator {
         if(!variables.contains(leftName)){
             variables.add(leftName);
             if(n != -1){
-                addLine(leftName + " = []");
+                addLineToOutput(leftName + " = []");
             }
         }
-        addLine(line.get(0) + " = " + right);
+        addLineToOutput(line.get(0) + " = " + right);
         if(clearParams)
             clearParam();
 
     }
 
-    private void ret(List<String> line) throws NumberOfArgumentException {
+    private void addReturnValue(List<String> line) throws NumberOfArgumentException {
         assertSize(line, 2);
-        addLine(RETURN_STACK + ".push(" +line.get(1)+ ")");
+        addLineToOutput(RETURN_STACK + ".push(" +line.get(1)+ ")");
     }
 
-    private void Ret(List<String> line) {
-        addLine("return " + RETURN_STACK);
+    private void translateReturn(List<String> line) {
+        addLineToOutput("return " + RETURN_STACK);
     }
 
+    /**
+     * Check if a line has enough words
+     * @param line list of words
+     * @param n number of minimum words
+     * @throws NumberOfArgumentException
+     */
     private void assertSize(List<String> line, int n) throws NumberOfArgumentException {
         if(line.size() < n)
-            throw new NumberOfArgumentException(getLine());
+            throw new NumberOfArgumentException(getCurrentLine());
     }
 
-    private void func(List<String> line) throws OptimizeException {
+    private void translateFunction(List<String> line) throws OptimizeException {
         variables.clear();
         assertSize(line, 2);
         if(line.get(1).equals("begin")){
             assertSize(line, 3);
 
-            addLine("function " + PREFIX+line.get(2) + "("+PARAMS_STACK_FUNC+"){");
+            addLineToOutput("function " + PREFIX+line.get(2) + "("+PARAMS_STACK_FUNC+"){");
             tabs++;
-            addLine("let " + RETURN_STACK + " = []");
-            addLine("let " + PARAMS_STACK + " = []");
+            addLineToOutput("let " + RETURN_STACK + " = []");
+            addLineToOutput("let " + PARAMS_STACK + " = []");
 
-            int lineDefine = getIndex();
+            int lineDefine = getOutputLineIndex();
 
-            line = getNext();
+            line = getNextInputLine();
             while(line.size() != 2 || !line.get(0).equals("func") || !line.get(1).equals("end")){
                 translateLine(line);
-                line = getNext();
+                line = getNextInputLine();
             }
 
             for(String var : variables){
-                addLine("let " + var + " = null", lineDefine);
+                addLineToOutput("let " + var + " = null", lineDefine);
             }
 
             tabs--;
-            addLine("}");
+            addLineToOutput("}");
         }else{
-            throw new OptimizeException(getLine(), "Operation not found");
+            throw new OptimizeException(getCurrentLine(), "Operation not found");
         }
     }
 
-    private String getLine(){
+    private String getCurrentLine(){
         return String.join(" ", words.get(n-1));
     }
 
-    private void addLine(String line){
+    private void addLineToOutput(String line){
         res.add("\t".repeat(tabs) + line);
     }
-    private void addLine(String line, int n){
+    private void addLineToOutput(String line, int n){
         res.add(n, "\t".repeat(tabs) + line);
     }
-    private int getIndex(){
+    private int getOutputLineIndex(){
         return res.size();
     }
 
-    private List<String> getNext(){
+    private List<String> getNextInputLine(){
         if(n >= words.size())
             return null;
         return words.get(n++);
