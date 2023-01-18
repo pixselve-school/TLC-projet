@@ -1,6 +1,6 @@
 # Description technique
 
-## Description de l’architecture du compilateur et de la chaine de compilation depuis le code source en WHILE à la récupération d’un programme exécutable
+## Architecture du compilateur et de la chaine de compilation
 
 ```mermaid
 flowchart
@@ -10,7 +10,7 @@ A[Lecture du fichier par le programme Java] --> B[Parsing du fichier par ANTLR] 
 Nous avons fait en sorte que cela soit facile à utiliser pour l'utilisateur. Le script prend en compte deux arguments.
 Le premier correspond au fichier d'entrée, le second au fichier de sortie.
 
-## Description de l’AST
+## AST
 
 ### Fonctions
 
@@ -83,7 +83,21 @@ Le noeud `WHILE` comprend 2 noeuds :
 - Le premier `Opt1` correspond à la condition d'exécution
 - Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
 
-## Description de la génération de code à partir du code 3 adresses
+## Génération de code 3 adresses à partir de l’AST
+
+La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est
+basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses
+sont ajoutées au tableau qui correspond à tout le code 3 adresses résultat. Les fonctionnalités principales dont les AST
+sont plus haut sont traitées séparément dans des classes différentes, comme les IF, les boucles FOR ou les FONCTIONS.
+
+Pour cela, on utilise une classe `Expression` qui permet de désigner une expression qui peut être utilisée dans une
+variable ou une boucle. Cette classe permet de décomposer une expression en ses sous-expressions afin de générer le code
+3 adresses correspondant.
+
+Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
+
+
+## Génération de code à partir du code 3 adresses
 
 Tout d'abord, nous avons décidé de définir toutes les variables au début de chaque fonction. Cela est nécessaire, car
 dans le langage while, il n'est pas nécessaire de déclarer les variables avant de les utiliser. Par conséquent, pour
@@ -102,19 +116,6 @@ présentes dans le code 3 adresses, il faut donc les recréer lors de la convers
 
 Enfin, nous avons ajouté des préfixes aux fonctions pour éviter les collisions avec les mots clés réservés du langage
 cible. Cela permet de s'assurer que les fonctions générées sont valides et peuvent être utilisées sans erreurs.
-
-## Description de la génération de code 3 adresses à partir de l’AST
-
-La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est
-basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses
-sont ajoutées au tableau qui correspond à tout le code 3 adresses résultat. Les fonctionnalités principales dont les AST
-sont plus haut sont traitées séparément dans des classes différentes, comme les IF, les boucles FOR ou les FONCTIONS.
-
-Pour cela, on utilise une classe `Expression` qui permet de désigner une expression qui peut être utilisée dans une
-variable ou une boucle. Cette classe permet de décomposer une expression en ses sous-expressions afin de générer le code
-3 adresses correspondant.
-
-Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
 
 ```mermaid
 flowchart
@@ -154,11 +155,11 @@ end
 15[B]
 ```
 
-### Description de l’optimisation de code si elle a été réalisée
+### Optimisation de code si elle a été réalisée
 
 L’optimisation de code n’a pas été réalisée.
 
-### Description de la bibliothèque runtime de WHILE écrite dans le langage cible
+### Bibliothèque runtime de WHILE écrite dans le langage cible
 
 La runtime Javascript de notre compilateur WHILE est très légère. Elle permet de convertir un tableau en entier, booléen
 et chaîne de caractères avec `toInt()` et `toBool()`. Elle permet également de print des tableaux en fonction de leur
