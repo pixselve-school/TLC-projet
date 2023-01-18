@@ -28,13 +28,13 @@ générer le code intermédiaire et de rédiger la runtime Javascript.
 
 ## Rapport individuel
 
-| Tâche | Membre de l'équipe |
-| --- | --- |
-| Lecture du fichier par le programme Java | Fabien & Mael |
-| Parsing du fichier par ANTLR | Fabien & Mael |
-| Analyse lexiale et syntaxique par ANTLR | Fabien & Mael |
-| Analyse sémantique | Fabien |
-| Génération du code intermédiaire | Mael |
-| Optimisation | Non implémentée |
-| Génération du code JavaScript | Mael |
-| Écriture de la runtime Javascript | Mael |
+| Tâche                                    | Membre de l'équipe |
+|------------------------------------------|--------------------|
+| Lecture du fichier par le programme Java | Fabien & Mael      |
+| Parsing du fichier par ANTLR             | Fabien & Mael      |
+| Analyse lexiale et syntaxique par ANTLR  | Fabien & Mael      |
+| Analyse sémantique                       | Fabien             |
+| Génération du code intermédiaire         | Mael               |
+| Optimisation                             | Non implémentée    |
+| Génération du code JavaScript            | Mael               |
+| Écriture de la runtime Javascript        | Mael               |
