@@ -25,6 +25,6 @@ node /out/and.js <parameters of main function>
 ```
 
 # Documents
-- [Decription Technique](./docs/description-technique.md)
-- [Methodologie Gestion de projet](./docs/methodologie-gestion-de-projet.md)
-- [Validation compilateur](./docs/validation-compilateur.md)
+- [Description Technique](./docs/description-technique.md)
+- [Methodologies Gestion de projet](./docs/methodologie-gestion-de-projet.md)
+- [Analyse Sémantique](./docs/validation-compilateur.md)
