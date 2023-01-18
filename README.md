@@ -23,3 +23,8 @@ input_file output_3addr output_js
 ```txt
 node /out/and.js <parameters of main function>
 ```
+
+# Documents
+- [Decription Technique](./docs/description-technique.md)
+- [Methodologie Gestion de projet](./docs/methodologie-gestion-de-projet.md)
+- [Validation compilateur](./docs/validation-compilateur.md)
