@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'antlr'
     id 'org.jetbrains.kotlin.jvm' version '1.8.0-RC'
+    id 'application'
 }
 
 group 'org.example'
@@ -9,6 +10,16 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClass.set("org.example.Main")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.Main'
+    }
 }
 
 dependencies {

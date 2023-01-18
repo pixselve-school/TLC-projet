@@ -4,7 +4,14 @@ Projet : Le compilateur While
 # Requirements
 Compile antlr3 :
 ```shell
-gradle generateGrammarSource
+sh gradlew generateGrammarSource
+gradlew.bat generateGrammarSource
+```
+
+# Launch the compiler
+```shell
+sh gradlew run
+gradlew.bat run
 ```
 
 # Parameters
