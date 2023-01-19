@@ -83,7 +83,9 @@ Le noeud `WHILE` comprend 2 noeuds :
 - Le premier `Opt1` correspond à la condition d'exécution
 - Le deuxième `COMMANDS` correspond aux instructions à exécuter lors de chaque itération de la boucle.
 
-## Génération de code 3 adresses à partir de l’AST
+## [Analyse sémantique](./analyse-semantique.md)
+
+## De l'AST vers 3 adresses
 
 La génération de code 3 adresses à partir de l’AST se fait en utilisant un walker qui traverse l'AST. La génération est
 basée sur une fonction récursive qui prend en paramètre un arbre et une liste de string. Les lignes de code 3 adresses
@@ -97,7 +99,7 @@ variable ou une boucle. Cette classe permet de décomposer une expression en ses
 Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
 
 
-## Génération de code à partir du code 3 adresses
+## Du 3 adresses vers Javascript
 
 Tout d'abord, nous avons décidé de définir toutes les variables au début de chaque fonction. Cela est nécessaire, car
 dans le langage while, il n'est pas nécessaire de déclarer les variables avant de les utiliser. Par conséquent, pour

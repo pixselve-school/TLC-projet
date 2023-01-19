@@ -1,37 +1,40 @@
-﻿# projet-tlc
-Projet : Le compilateur While 
+﻿# Projet TLC - Compilateur While
 
-# Requirements
-Compile antlr3 :
+Membres :
+- GOARDOU Fabien
+- KERICHARD Mael
+
+## Compilation de la grammaire
 ```shell
 sh gradlew generateGrammarSource
 gradlew.bat generateGrammarSource
 ```
 
-# Launch the compiler
-```shell
-sh gradlew run
-gradlew.bat run
-```
-
-# Parameters
-Located on the Main class :
+## Lancer le compilateur
+### Parameters
+Dans la classe Main :
 ```java
 String pathRead = "src/main/resources/and.txt";
 String pathWrite3addr = "out/and.3addr";
 String pathWriteJS = "out/and.js";
 ```
-Or launch the main function on your IDEA with arguments :
+Ou lancer la fonction main avec les arguments suivants :
 ```txt
 input_file output_3addr output_js
 ```
 
-# Launch output js file
+### Lancement
+Lancer gradle avec l'option `run`
+```shell
+sh gradlew run
+gradlew.bat run
+```
+
+## Lancer le programme fournis
 ```txt
 node /out/and.js <parameters of main function>
 ```
 
-# Documents
+## Documents
 - [Description Technique](./docs/description-technique.md)
 - [Methodologies Gestion de projet](./docs/methodologie-gestion-de-projet.md)
-- [Analyse Sémantique](./docs/validation-compilateur.md)
