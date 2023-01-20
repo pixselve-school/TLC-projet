@@ -8,6 +8,7 @@ Fonctionnalités implémentées :
 Fonctionnalités non implémentées :
 - Optimizer
 - Foreach
+- Certains tests
 - Appel d'une fonction avec comme argument une autre fonction
 
 L'utilisation de gradle nous a permis de gérer facilement nos dépendances et notre compilation, **dont la compilation du code source antlr**. En revanche nous n'avons pas réussi à le compiler en jar avec toutes les dépendances. Peut-être que maven aurait été plus simple dans ce cas.

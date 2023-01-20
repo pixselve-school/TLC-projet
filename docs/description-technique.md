@@ -98,11 +98,6 @@ variable ou une boucle. Cette classe permet de décomposer une expression en ses
 
 Par exemple, on retrouve le fil d’exécution du convertisseur dans le graphique ci-dessous :
 
-### Validation du compilateur vers 3 adresses
-Les tests implémentés pour la compilation 3 adresses couvre **90%** des lignes de code ce ces classes.
-Pour chaque fonctionnalité citée ci-dessus, un test est réalisé pour vérifier et valider le code.
-Un test est composé de lignes de commandes en while converti en AST en entrée, et d'un code 3 adresses attendu en sorti.
-
 ## Optimisation de code si elle a été réalisée
 
 L’optimisation de code n’a pas été réalisée. La classe est implementé pour l'ajout de cette fonctionnalité dans le future,
@@ -173,6 +168,3 @@ et chaîne de caractères avec `toInt()` et `toBool()`. Elle permet également d
 type et de naviguer dans un tableau avec `tl()` et `hd()`. On utilise aussi un bout de code javascript qui permet de
 récupérer les arguments avec lequel le programme est exécuté. Ces arguments sont ensuite envoyés à la fonction `main` du
 programme WHILE.
-
-## Tests
-Pour chaque étape de la compilation, nous avons implémentés des tests sur un maximum de fonctions. Noter coverage total est de **74%** des lignes de code.

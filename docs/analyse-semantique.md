@@ -52,11 +52,3 @@ d'un point d'entre à notre programme afin de pouvoir exécuter certaines action
 
 Le nombre d'arguments précisé dans la fonction main défini le nombre d'arguments nécessaires
 au lancement du programme final dans le terminal.
-
-## Tests
-Les tests suivants sont implémentés sur le checker :
-- vérifier si une fonction existe
-- vérifier si une variable existe
-- vérifier si une fonction a déjà été définie
-
-La couverture des lignes est de **72%**
