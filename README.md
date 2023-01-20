@@ -38,3 +38,4 @@ node /out/and.js <parameters of main function>
 ## Documents
 - [Description Technique](./docs/description-technique.md)
 - [Methodologies Gestion de projet](./docs/methodologie-gestion-de-projet.md)
+- [Analyse Postmortem](./docs/post-mortem.md)
